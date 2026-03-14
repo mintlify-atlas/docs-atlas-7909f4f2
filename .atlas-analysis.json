@@ -1,0 +1,80 @@
+{
+  "projectType": "frontend",
+  "projectName": "ZOODOM",
+  "projectDescription": "A production-ready Astro website for a national zoo featuring species information, event calendar, visit planning, and educational content.",
+  "theme": "almond",
+  "primaryColor": "#246C32",
+  "lightColor": "#6DD281",
+  "darkColor": "#144A1F",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting Started",
+        "pages": [
+          "introduction",
+          "installation",
+          "quickstart"
+        ]
+      },
+      {
+        "group": "Project Structure",
+        "pages": [
+          "structure/overview",
+          "structure/layouts",
+          "structure/components",
+          "structure/pages",
+          "structure/assets"
+        ]
+      },
+      {
+        "group": "Components",
+        "pages": [
+          "components/head",
+          "components/navigation",
+          "components/layout"
+        ]
+      },
+      {
+        "group": "Styling",
+        "pages": [
+          "styling/overview",
+          "styling/design-system",
+          "styling/bootstrap-integration",
+          "styling/custom-css"
+        ]
+      },
+      {
+        "group": "Features",
+        "pages": [
+          "features/species-catalog",
+          "features/event-calendar",
+          "features/visit-planning",
+          "features/blog",
+          "features/gallery"
+        ]
+      },
+      {
+        "group": "Deployment",
+        "pages": [
+          "deployment/netlify",
+          "deployment/build-process",
+          "deployment/configuration"
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Responsive navigation with Bootstrap integration",
+    "Custom design system with comprehensive color palette",
+    "Astro component-based architecture",
+    "SEO-optimized meta tags and Open Graph integration",
+    "Species catalog and event calendar sections",
+    "Multilingual support (Spanish)"
+  ],
+  "publicApiSurface": [
+    "Layout.astro - Main layout component",
+    "Head.astro - SEO and meta tags component",
+    "index.astro - Homepage with hero section and navigation",
+    "global.css - Design system and custom styles"
+  ]
+}
