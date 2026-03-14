@@ -1,0 +1,609 @@
+---
+title: Visit Planning
+description: Learn how to implement the visit planning feature to help visitors prepare for their zoo experience
+---
+
+# Visit Planning
+
+The Visit Planning section ("Planifica tu visita") is an essential resource that provides visitors with all the practical information they need to plan and enjoy their zoo experience. This feature combines operational details, visitor amenities, and helpful tips into a comprehensive planning guide.
+
+## Purpose
+
+The visit planning feature serves multiple goals:
+
+- **Inform**: Provide clear, accurate information about hours, prices, and location
+- **Reduce Friction**: Answer common questions before visitors arrive
+- **Increase Satisfaction**: Help visitors plan efficiently and avoid surprises
+- **Accessibility**: Ensure all visitors can find information about accommodations and services
+- **Conversions**: Make it easy to purchase tickets and plan visits, increasing attendance
+
+## Essential Information to Include
+
+### Operating Hours
+- Regular hours (weekday vs. weekend)
+- Seasonal variations
+- Holiday schedules
+- Last entry time
+- Feeding/show times
+
+### Admission & Tickets
+- General admission prices
+- Discounts (children, seniors, students, groups)
+- Annual memberships
+- Free admission days
+- Online vs. gate pricing
+- Ticket purchasing options
+
+### Getting There
+- Physical address
+- GPS coordinates
+- Driving directions from major routes
+- Public transportation options
+- Parking information and fees
+- Bike parking/accessibility
+
+### Visitor Services
+- Restroom locations
+- Food and beverage options
+- Gift shop
+- First aid station
+- Lost and found
+- Stroller/wheelchair rental
+- Locker availability
+
+### Rules & Guidelines
+- What to bring
+- What not to bring
+- Pet policy
+- Photography rules
+- Code of conduct
+
+### Accessibility
+- Wheelchair accessibility
+- Accessible parking
+- Service animal policy
+- Sensory-friendly information
+- Accessibility map
+
+## Implementation Guide
+
+<Steps>
+
+<Step title="Create Main Visit Planning Page">
+
+Create `src/pages/planifica-tu-visita.astro`:
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import InfoCard from '../components/InfoCard.astro';
+---
+
+<Layout title="Planifica tu Visita">
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-primary text-white py-5">
+      <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Planifica tu Visita</h1>
+        <p class="lead">
+          Todo lo que necesitas saber para disfrutar al máximo tu día en el zoológico
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick Info Cards -->
+    <section class="container py-5">
+      <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+          <InfoCard 
+            icon="🕐"
+            title="Horario"
+            content="Lunes a Domingo<br/>9:00 AM - 5:00 PM"
+            link="#horarios"
+          />
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <InfoCard 
+            icon="💵"
+            title="Entrada General"
+            content="Adultos: $15<br/>Niños: $10"
+            link="#precios"
+          />
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <InfoCard 
+            icon="📍"
+            title="Ubicación"
+            content="Av. Zoológico 123<br/>Santo Domingo"
+            link="#ubicacion"
+          />
+        </div>
+        <div class="col-md-6 col-lg-3">
+          <InfoCard 
+            icon="🎟️"
+            title="Comprar Boletos"
+            content="Reserva en línea<br/>y ahorra tiempo"
+            link="#boletos"
+          />
+        </div>
+      </div>
+
+      <!-- Detailed Sections -->
+      <div class="row">
+        <div class="col-lg-8">
+          <!-- Hours Section -->
+          <section id="horarios" class="mb-5">
+            <h2 class="h3 mb-4">Horarios de Operación</h2>
+            <div class="card">
+              <div class="card-body">
+                <table class="table mb-0">
+                  <tbody>
+                    <tr>
+                      <td class="fw-bold">Lunes a Viernes</td>
+                      <td>9:00 AM - 5:00 PM</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-bold">Sábado y Domingo</td>
+                      <td>8:00 AM - 6:00 PM</td>
+                    </tr>
+                    <tr>
+                      <td class="fw-bold">Última Entrada</td>
+                      <td>1 hora antes del cierre</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="alert alert-info mt-3 mb-0">
+                  <strong>Nota:</strong> Los horarios pueden variar durante días festivos. 
+                  Consulta nuestro <a href="/eventos" class="alert-link">calendario de eventos</a>.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Pricing Section -->
+          <section id="precios" class="mb-5">
+            <h2 class="h3 mb-4">Precios de Entrada</h2>
+            <div class="card">
+              <div class="card-body">
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <h3 class="h5">Adultos (13-64 años)</h3>
+                    <p class="h4 text-primary mb-0">$15.00</p>
+                  </div>
+                  <div class="col-6">
+                    <h3 class="h5">Niños (3-12 años)</h3>
+                    <p class="h4 text-primary mb-0">$10.00</p>
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-6">
+                    <h3 class="h5">Adultos Mayores (65+)</h3>
+                    <p class="h4 text-primary mb-0">$12.00</p>
+                  </div>
+                  <div class="col-6">
+                    <h3 class="h5">Menores de 3 años</h3>
+                    <p class="h4 text-success mb-0">Gratis</p>
+                  </div>
+                </div>
+                <hr />
+                <h3 class="h5 mb-3">Paquetes Especiales</h3>
+                <ul class="list-unstyled">
+                  <li class="mb-2">🎫 <strong>Pase Familiar (2 adultos + 2 niños):</strong> $45.00</li>
+                  <li class="mb-2">📅 <strong>Membresía Anual Individual:</strong> $60.00</li>
+                  <li class="mb-2">👨‍👩‍👧‍👦 <strong>Membresía Anual Familiar:</strong> $150.00</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <!-- Location Section -->
+          <section id="ubicacion" class="mb-5">
+            <h2 class="h3 mb-4">Cómo Llegar</h2>
+            <div class="card mb-3">
+              <div class="card-body">
+                <h3 class="h5">Dirección</h3>
+                <p class="mb-0">
+                  Avenida del Zoológico Nacional 123<br />
+                  Santo Domingo, República Dominicana
+                </p>
+              </div>
+            </div>
+
+            <!-- Map placeholder -->
+            <div class="card mb-3">
+              <div class="card-body p-0">
+                <div id="map" class="bg-light" style="height: 300px;">
+                  <div class="d-flex align-items-center justify-content-center h-100">
+                    <p class="text-muted">Mapa interactivo (Google Maps)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h3 class="h5">🚗 En Auto</h3>
+                    <p class="small mb-0">
+                      Desde el centro: Tome la Autopista 27 de Febrero hacia el norte.
+                      Salga en Av. Máximo Gómez y continúe por 5 km.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card h-100">
+                  <div class="card-body">
+                    <h3 class="h5">🚌 Transporte Público</h3>
+                    <p class="small mb-0">
+                      Rutas de autobús: B12, B15, B27<br />
+                      Metro: Línea 2, Estación Zoológico<br />
+                      Parada a 200m de la entrada
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mt-3">
+              <div class="card-body">
+                <h3 class="h5">🅿️ Estacionamiento</h3>
+                <p class="mb-0">
+                  Estacionamiento gratuito disponible con más de 500 espacios.
+                  Áreas especiales para personas con discapacidad cerca de la entrada.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- What to Bring -->
+          <section id="que-traer" class="mb-5">
+            <h2 class="h3 mb-4">Qué Traer</h2>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card border-success h-100">
+                  <div class="card-header bg-success text-white">
+                    <strong>✓ Recomendado</strong>
+                  </div>
+                  <div class="card-body">
+                    <ul class="mb-0">
+                      <li>Protector solar</li>
+                      <li>Sombrero o gorra</li>
+                      <li>Botella de agua reutilizable</li>
+                      <li>Calzado cómodo</li>
+                      <li>Cámara fotográfica</li>
+                      <li>Snacks ligeros</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card border-danger h-100">
+                  <div class="card-header bg-danger text-white">
+                    <strong>✗ No Permitido</strong>
+                  </div>
+                  <div class="card-body">
+                    <ul class="mb-0">
+                      <li>Mascotas (excepto animales de servicio)</li>
+                      <li>Bicicletas, patinetas, scooters</li>
+                      <li>Globos y objetos voladores</li>
+                      <li>Bebidas alcohólicas</li>
+                      <li>Comida para dar a los animales</li>
+                      <li>Drones</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Services -->
+          <section id="servicios" class="mb-5">
+            <h2 class="h3 mb-4">Servicios para Visitantes</h2>
+            <div class="row g-3">
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">🍔</div>
+                  <h3 class="h6">Restaurantes</h3>
+                  <p class="small text-muted">3 opciones de comida</p>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">🛍️</div>
+                  <h3 class="h6">Tienda de Regalos</h3>
+                  <p class="small text-muted">Souvenirs y artículos</p>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">🚻</div>
+                  <h3 class="h6">Baños</h3>
+                  <p class="small text-muted">6 ubicaciones</p>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">🏥</div>
+                  <h3 class="h6">Primeros Auxilios</h3>
+                  <p class="small text-muted">Estación médica</p>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">♿</div>
+                  <h3 class="h6">Accesibilidad</h3>
+                  <p class="small text-muted">100% accesible</p>
+                </div>
+              </div>
+              <div class="col-sm-6 col-md-4">
+                <div class="text-center p-3">
+                  <div class="fs-1 mb-2">👶</div>
+                  <h3 class="h6">Área de Bebés</h3>
+                  <p class="small text-muted">Cambiadores disponibles</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="col-lg-4">
+          <div class="card mb-4 sticky-top" style="top: 2rem;">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Compra tus Boletos</h3>
+              <p class="small">Evita las filas comprando en línea</p>
+              <a href="#" class="btn btn-primary w-100 mb-2">
+                Comprar Ahora
+              </a>
+              <a href="/eventos" class="btn btn-outline-secondary w-100">
+                Ver Eventos
+              </a>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Consejos Útiles</h3>
+              <ul class="list-unstyled small">
+                <li class="mb-2">🌤️ Visita temprano para evitar el calor</li>
+                <li class="mb-2">🦁 Los animales son más activos por la mañana</li>
+                <li class="mb-2">📸 Mejores fotos con luz natural</li>
+                <li class="mb-2">👟 Caminarás ~3 km, usa calzado cómodo</li>
+                <li class="mb-2">💧 Hidrátate constantemente</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">¿Preguntas?</h3>
+              <p class="small">Nuestro equipo está aquí para ayudarte</p>
+              <a href="/contacto" class="btn btn-outline-primary w-100">
+                Contáctanos
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
+```
+
+</Step>
+
+<Step title="Create Reusable Info Card Component">
+
+Create `src/components/InfoCard.astro`:
+
+```astro
+---
+interface Props {
+  icon: string;
+  title: string;
+  content: string;
+  link?: string;
+}
+
+const { icon, title, content, link } = Astro.props;
+---
+
+<div class="info-card card h-100 text-center">
+  <div class="card-body">
+    <div class="display-4 mb-3">{icon}</div>
+    <h3 class="h5 mb-2">{title}</h3>
+    <p class="small mb-0" set:html={content} />
+    {link && (
+      <a href={link} class="stretched-link" aria-label={`Ver más sobre ${title}`}></a>
+    )}
+  </div>
+</div>
+
+<style>
+  .info-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .info-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+</style>
+```
+
+</Step>
+
+<Step title="Add Interactive Map Integration">
+
+Add Google Maps embed or custom map. Update the map section in the visit planning page:
+
+```astro
+<!-- Replace the map placeholder with actual Google Maps -->
+<div class="card mb-3">
+  <div class="card-body p-0">
+    <iframe
+      src="https://www.google.com/maps/embed?pb=YOUR_EMBED_CODE"
+      width="100%"
+      height="300"
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Mapa del Zoológico Nacional"
+    ></iframe>
+  </div>
+</div>
+```
+
+Or create an interactive SVG map of the zoo grounds:
+
+```astro
+<!-- src/components/ZooMap.astro -->
+---
+// Component for interactive zoo map
+---
+
+<div class="zoo-map">
+  <svg viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+    <!-- Define zoo areas, paths, and points of interest -->
+    <rect id="entrance" x="10" y="280" width="40" height="40" fill="#4CAF50" />
+    <text x="60" y="305" class="map-label">Entrada</text>
+    
+    <!-- Add more areas -->
+  </svg>
+</div>
+
+<style>
+  .zoo-map {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .map-label {
+    font-size: 14px;
+    font-family: sans-serif;
+  }
+</style>
+```
+
+</Step>
+
+<Step title="Create FAQ Section">
+
+Add a frequently asked questions section as a separate page or component:
+
+```astro
+<!-- src/components/VisitFAQ.astro -->
+---
+const faqs = [
+  {
+    question: "¿Puedo traer mi propia comida?",
+    answer: "Sí, los visitantes pueden traer comida y bebidas no alcohólicas. Contamos con áreas de picnic designadas."
+  },
+  {
+    question: "¿El zoológico es accesible para sillas de ruedas?",
+    answer: "Sí, todas las áreas del zoológico son accesibles para sillas de ruedas. También ofrecemos alquiler de sillas de ruedas en la entrada."
+  },
+  {
+    question: "¿Qué pasa si llueve?",
+    answer: "El zoológico permanece abierto durante la lluvia. Muchos animales tienen áreas cubiertas para ver. Recomendamos traer un impermeable o paraguas."
+  },
+  {
+    question: "¿Puedo reentrar el mismo día?",
+    answer: "Sí, con tu boleto puedes salir y reingresar el mismo día. Solo solicita un sello de mano en la salida."
+  },
+];
+---
+
+<section class="faq">
+  <h2 class="h3 mb-4">Preguntas Frecuentes</h2>
+  <div class="accordion" id="faqAccordion">
+    {faqs.map((faq, index) => (
+      <div class="accordion-item">
+        <h3 class="accordion-header">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target={`#faq${index}`}
+            aria-expanded="false"
+          >
+            {faq.question}
+          </button>
+        </h3>
+        <div
+          id={`faq${index}`}
+          class="accordion-collapse collapse"
+          data-bs-parent="#faqAccordion"
+        >
+          <div class="accordion-body">
+            {faq.answer}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+```
+
+</Step>
+
+</Steps>
+
+<Note>
+  Keep the visit planning information up to date. Hours, prices, and policies change seasonally. Consider using environment variables or a CMS for easy updates.
+</Note>
+
+## Best Practices
+
+### Content Organization
+
+- **Progressive Disclosure**: Show essential info first (hours, prices, location)
+- **Scannable Layout**: Use cards, icons, and clear headings
+- **Visual Hierarchy**: Make the most important information stand out
+- **Quick Links**: Provide jump links to specific sections
+
+### Mobile Experience
+
+- Stack cards vertically on mobile devices
+- Use larger touch targets for buttons and links
+- Optimize map for mobile viewing
+- Consider a "Save for Later" or download PDF option
+
+### Accessibility
+
+- Provide detailed accessibility information prominently
+- Include sensory-friendly visiting hours if available
+- List all accessibility services (wheelchairs, ASL interpreters, etc.)
+- Ensure color contrast meets WCAG AA standards
+
+### SEO Optimization
+
+- Use schema.org markup for tourist attractions
+- Include local business structured data
+- Optimize for "zoo hours", "zoo tickets", "zoo directions" searches
+- Add FAQ schema for question-answer sections
+
+<Tip>
+  Add a weather widget showing current conditions and forecast. This helps visitors decide what to wear and when to visit.
+</Tip>
+
+## Integration Opportunities
+
+- **Event Calendar**: Link to today's events and feeding times
+- **Online Ticketing**: Integrate with ticketing platform
+- **Membership Portal**: Link to membership benefits and signup
+- **Real-time Updates**: Show current wait times or closures
+- **Social Proof**: Display visitor reviews and ratings
+
+## Future Enhancements
+
+- **Virtual Tour**: 360-degree preview of the zoo
+- **Augmented Reality Map**: Interactive wayfinding via mobile app
+- **Live Animal Cams**: Preview animals before visiting
+- **Weather-Based Suggestions**: Recommend best areas based on weather
+- **Crowd Predictions**: Show expected busy times
+- **Personalized Itineraries**: Generate custom visit plans based on interests

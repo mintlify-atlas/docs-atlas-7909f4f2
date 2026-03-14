@@ -1,0 +1,211 @@
+---
+title: Project Structure Overview
+description: Complete directory structure and organization of the ZOODOM Astro project
+---
+
+# Project Structure Overview
+
+ZOODOM is built with Astro, following standard Astro project conventions. This page provides a comprehensive overview of the project's directory structure and organization.
+
+## Directory Tree
+
+```
+zoodom/
+├── .git/                  # Git version control
+├── .vscode/              # VS Code configuration
+├── public/               # Static assets served as-is
+│   └── cover.png        # Social media cover image
+├── src/                  # Source code directory
+│   ├── assets/          # Project assets (images, styles)
+│   │   ├── global.css   # Global styles and CSS variables
+│   │   ├── hero.png     # Hero section image
+│   │   ├── logo.svg     # ZOODOM logo
+│   │   └── texture-img.png # Background texture
+│   ├── components/      # Reusable Astro components
+│   │   └── Head.astro   # HTML head component
+│   ├── layouts/         # Layout templates
+│   │   └── Layout.astro # Main layout wrapper
+│   └── pages/           # File-based routing
+│       └── index.astro  # Homepage
+├── .gitignore           # Git ignore rules
+├── astro.config.mjs     # Astro configuration
+├── package.json         # Node.js dependencies
+├── package-lock.json    # Locked dependency versions
+├── tsconfig.json        # TypeScript configuration
+├── LICENSE              # Project license
+└── README.md            # Project documentation
+```
+
+## Astro Project Structure Conventions
+
+Astro follows a convention-based structure where specific directories have special meanings:
+
+### `/src` Directory
+
+The `src/` directory contains all source code that Astro processes:
+
+- **Component imports** - Any code in `src/` can be imported using relative paths
+- **Asset optimization** - Images and styles are automatically optimized
+- **TypeScript support** - Full TypeScript integration out of the box
+
+### `/public` Directory
+
+The `public/` directory contains static assets that are:
+
+- Served as-is without processing
+- Accessible at the root URL (e.g., `/cover.png`)
+- Not optimized or transformed by Astro
+- Ideal for files like `robots.txt`, `favicon.ico`, or social media images
+
+## Top-Level Directories
+
+<AccordionGroup>
+  <Accordion title="src/" icon="code">
+    The main source directory containing all Astro components, pages, layouts, and assets. Everything in this directory is processed by Astro's build system.
+    
+    **Key features:**
+    - Hot module reloading in development
+    - Asset optimization and bundling
+    - TypeScript type checking
+    - Component scoped styles
+  </Accordion>
+
+  <Accordion title="public/" icon="folder">
+    Static assets directory for files that should be served without modification.
+    
+    **Current contents:**
+    - `cover.png` - Open Graph social sharing image (669KB)
+    
+    **Use cases:**
+    - Favicon files
+    - robots.txt
+    - Static images referenced in meta tags
+    - Third-party verification files
+  </Accordion>
+
+  <Accordion title="Configuration Files" icon="gear">
+    Root-level configuration files that control the build process and tooling:
+    
+    - `astro.config.mjs` - Astro framework configuration
+    - `tsconfig.json` - TypeScript compiler options
+    - `package.json` - Dependencies and scripts
+    - `.gitignore` - Version control exclusions
+  </Accordion>
+</AccordionGroup>
+
+## Source Directory Structure
+
+### `src/assets/`
+
+Contains project assets that are imported and processed:
+
+- **CSS files** - Global styles and custom properties
+- **Images** - Logos, hero images, textures
+- **Optimized** - Astro can optimize these at build time
+
+See [Assets](/structure/assets) for detailed documentation.
+
+### `src/components/`
+
+Reusable Astro components for common UI elements:
+
+- `Head.astro` - SEO and metadata component with props interface
+
+Components can be imported into pages and layouts. See [Components](/structure/components) for more details.
+
+### `src/layouts/`
+
+Layout templates that wrap page content:
+
+- `Layout.astro` - Main layout with Bootstrap integration
+
+Layouts use Astro's `<slot />` pattern to inject page content. See [Layouts](/structure/layouts) for implementation details.
+
+### `src/pages/`
+
+File-based routing directory where each file becomes a route:
+
+- `index.astro` → `/` (homepage)
+
+Astro automatically creates routes based on the file structure. See [Pages](/structure/pages) for routing documentation.
+
+## Configuration Files
+
+### astro.config.mjs
+
+Minimal Astro configuration defining the production site URL:
+
+```javascript
+// astro.config.mjs:1
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+    site: 'https://zoodomi.netlify.app',
+});
+```
+
+### package.json
+
+Defines the project as an ES module with Astro as the only dependency:
+
+```json
+{
+  "name": "zoodom",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "dependencies": {
+    "astro": "^6.0.4"
+  }
+}
+```
+
+<Info>
+The project uses Node.js 22.12.0 or higher and Astro 6.0.4, with no additional framework dependencies. Styling is handled via Bootstrap CDN.
+</Info>
+
+### tsconfig.json
+
+TypeScript configuration extending Astro's strict preset:
+
+```json
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
+```
+
+## Build Output
+
+When running `npm run build`, Astro generates:
+
+- `dist/` directory with static HTML, CSS, and JavaScript
+- Optimized assets with content hashing
+- Pre-rendered pages ready for deployment
+
+<Note>
+The `dist/` directory is excluded from version control via `.gitignore` and should not be committed.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Layouts" icon="layer-group" href="/structure/layouts">
+    Learn about the Layout.astro wrapper and Bootstrap integration
+  </Card>
+  
+  <Card title="Components" icon="puzzle-piece" href="/structure/components">
+    Explore the Head.astro component and props interface
+  </Card>
+  
+  <Card title="Pages" icon="file" href="/structure/pages">
+    Understand file-based routing and page structure
+  </Card>
+  
+  <Card title="Assets" icon="image" href="/structure/assets">
+    See how images and styles are organized and imported
+  </Card>
+</CardGroup>

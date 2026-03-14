@@ -1,0 +1,508 @@
+---
+title: Event Calendar
+description: Learn how to implement the event calendar feature to showcase zoo activities, shows, and special events
+---
+
+# Event Calendar
+
+The Event Calendar ("Calendario de eventos") is a priority feature that helps visitors discover and plan their zoo experience around scheduled activities, animal presentations, educational programs, and special events.
+
+## Purpose
+
+The event calendar provides several key benefits:
+
+- **Visit Planning**: Help visitors plan their day to see specific shows and activities
+- **Engagement**: Increase attendance at educational programs and presentations
+- **Communication**: Promote special events like conservation days, holiday celebrations, or new exhibits
+- **Organization**: Centralize all time-sensitive activities in one location
+
+## Data Structure
+
+Each event should include:
+
+- **Title**: Event name (e.g., "Alimentación de Leones Marinos")
+- **Date**: Event date or date range
+- **Time**: Start and end time
+- **Location**: Specific area within the zoo
+- **Description**: Detailed information about the activity
+- **Category**: Type of event (feeding, show, workshop, special event)
+- **Age Group**: Target audience (all ages, children, adults)
+- **Duration**: How long the event lasts
+- **Capacity**: Maximum number of participants (if applicable)
+- **Registration Required**: Whether advance signup is needed
+- **Image**: Visual representation of the event
+
+## Implementation Guide
+
+<Steps>
+
+<Step title="Create Content Collection for Events">
+
+Set up a content collection for events. Add to `src/content/config.ts`:
+
+```typescript
+import { defineCollection, z } from 'astro:content';
+
+const eventsCollection = defineCollection({
+  type: 'content',
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    date: z.date(),
+    endDate: z.date().optional(),
+    time: z.string(), // e.g., "10:00"
+    endTime: z.string().optional(),
+    location: z.string(),
+    category: z.enum([
+      'feeding',
+      'show',
+      'workshop',
+      'tour',
+      'special-event',
+      'talk',
+    ]),
+    ageGroup: z.enum(['all', 'children', 'adults', 'families']),
+    duration: z.string(), // e.g., "30 minutos"
+    capacity: z.number().optional(),
+    registrationRequired: z.boolean().default(false),
+    registrationUrl: z.string().url().optional(),
+    image: image().optional(),
+    recurring: z.enum(['daily', 'weekly', 'monthly', 'none']).default('none'),
+    daysOfWeek: z.array(z.number()).optional(), // 0-6 (Sunday-Saturday)
+    featured: z.boolean().default(false),
+  }),
+});
+
+export const collections = {
+  'events': eventsCollection,
+  // ... other collections
+};
+```
+
+</Step>
+
+<Step title="Create Event Data Files">
+
+Create event entries in `src/content/events/`. For example, `src/content/events/alimentacion-leones-marinos.mdx`:
+
+```mdx
+---
+title: Alimentación de Leones Marinos
+date: 2026-03-15
+time: "11:00"
+endTime: "11:30"
+location: Piscina de Leones Marinos
+category: feeding
+ageGroup: all
+duration: 30 minutos
+recurring: daily
+featured: true
+registrationRequired: false
+---
+
+## Sobre este Evento
+
+¡Observa cómo nuestros cuidadores alimentan a los leones marinos mientras aprenden sobre sus hábitos alimenticios y comportamiento!
+
+Durante esta presentación interactiva, nuestro equipo de expertos explicará:
+
+- La dieta natural de los leones marinos
+- Técnicas de enriquecimiento alimenticio
+- Cómo entrenamos a nuestros animales usando refuerzo positivo
+- Datos fascinantes sobre su biología marina
+
+## Qué Esperar
+
+La sesión incluye demostraciones de las habilidades naturales de los leones marinos, con oportunidades para hacer preguntas al personal del zoológico.
+
+**Consejo**: Llega 10 minutos antes para conseguir un buen lugar de observación.
+```
+
+</Step>
+
+<Step title="Create Calendar Page Component">
+
+Create `src/components/EventCalendar.astro` for the calendar display:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+
+const allEvents = await getCollection('events');
+
+// Filter upcoming events
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const upcomingEvents = allEvents
+  .filter(event => event.data.date >= today)
+  .sort((a, b) => a.data.date.getTime() - b.data.date.getTime());
+
+// Group events by date
+function groupByDate(events) {
+  return events.reduce((acc, event) => {
+    const dateKey = event.data.date.toISOString().split('T')[0];
+    if (!acc[dateKey]) acc[dateKey] = [];
+    acc[dateKey].push(event);
+    return acc;
+  }, {});
+}
+
+const eventsByDate = groupByDate(upcomingEvents);
+
+const categoryIcons = {
+  feeding: '🍽️',
+  show: '🎭',
+  workshop: '🎨',
+  tour: '🗺️',
+  'special-event': '⭐',
+  talk: '💬',
+};
+
+const categoryLabels = {
+  feeding: 'Alimentación',
+  show: 'Espectáculo',
+  workshop: 'Taller',
+  tour: 'Visita Guiada',
+  'special-event': 'Evento Especial',
+  talk: 'Charla Educativa',
+};
+
+function formatDate(date) {
+  return new Intl.DateTimeFormat('es-ES', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+}
+---
+
+<section class="event-calendar">
+  {Object.entries(eventsByDate).map(([date, events]) => (
+    <div class="mb-5">
+      <h2 class="h4 mb-3 text-capitalize">
+        {formatDate(new Date(date))}
+      </h2>
+      
+      <div class="row g-3">
+        {events.map((event) => (
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              {event.data.image && (
+                <img 
+                  src={event.data.image.src} 
+                  alt={event.data.title}
+                  class="card-img-top"
+                  style="height: 180px; object-fit: cover;"
+                />
+              )}
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h3 class="h6 card-title mb-0">{event.data.title}</h3>
+                  <span class="fs-4" title={categoryLabels[event.data.category]}>
+                    {categoryIcons[event.data.category]}
+                  </span>
+                </div>
+                
+                <div class="small text-muted mb-2">
+                  <div>🕐 {event.data.time}
+                    {event.data.endTime && ` - ${event.data.endTime}`}
+                  </div>
+                  <div>📍 {event.data.location}</div>
+                  <div>⏱️ {event.data.duration}</div>
+                </div>
+
+                <p class="card-text small">
+                  {event.body.split('\n')[0].slice(0, 100)}...
+                </p>
+
+                <a 
+                  href={`/eventos/${event.slug}`} 
+                  class="btn btn-sm btn-outline-primary"
+                >
+                  Ver Detalles
+                </a>
+
+                {event.data.registrationRequired && (
+                  <span class="badge bg-warning text-dark ms-2">
+                    Inscripción Requerida
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  ))}
+</section>
+
+<style>
+  .event-calendar {
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+  
+  .card:hover {
+    transform: translateY(-4px);
+    transition: transform 0.2s ease;
+  }
+</style>
+```
+
+</Step>
+
+<Step title="Create Events Index Page">
+
+Create `src/pages/eventos/index.astro`:
+
+```astro
+---
+import Layout from '../../layouts/Layout.astro';
+import EventCalendar from '../../components/EventCalendar.astro';
+import { getCollection } from 'astro:content';
+
+const allEvents = await getCollection('events');
+const featuredEvents = allEvents.filter(e => e.data.featured);
+---
+
+<Layout title="Calendario de Eventos">
+  <main class="container py-5">
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold">Calendario de Eventos</h1>
+      <p class="lead">
+        Descubre todas las actividades, espectáculos y eventos especiales
+      </p>
+    </div>
+
+    {featuredEvents.length > 0 && (
+      <section class="mb-5">
+        <h2 class="h3 mb-4">Eventos Destacados</h2>
+        <div class="row g-4">
+          {featuredEvents.slice(0, 3).map((event) => (
+            <div class="col-lg-4">
+              <div class="card border-primary h-100">
+                <div class="card-body">
+                  <h3 class="h5">{event.data.title}</h3>
+                  <p class="text-muted">
+                    {event.data.date.toLocaleDateString('es-ES')} - {event.data.time}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <section>
+      <h2 class="h3 mb-4">Próximos Eventos</h2>
+      <EventCalendar />
+    </section>
+  </main>
+</Layout>
+```
+
+</Step>
+
+<Step title="Create Individual Event Pages">
+
+Create `src/pages/eventos/[...slug].astro`:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const events = await getCollection('events');
+  return events.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { data } = entry;
+
+const formattedDate = new Intl.DateTimeFormat('es-ES', {
+  weekday: 'long',
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}).format(data.date);
+---
+
+<Layout title={data.title}>
+  <article class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="display-5 fw-bold mb-4">{data.title}</h1>
+        
+        {data.image && (
+          <img 
+            src={data.image.src} 
+            alt={data.title}
+            class="img-fluid rounded mb-4"
+          />
+        )}
+
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h2 class="h6 text-uppercase text-muted">Cuándo</h2>
+                <p class="mb-3">
+                  <strong>{formattedDate}</strong><br />
+                  {data.time} - {data.endTime || 'Fin'}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <h2 class="h6 text-uppercase text-muted">Dónde</h2>
+                <p class="mb-3">
+                  <strong>{data.location}</strong>
+                </p>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <h2 class="h6 text-uppercase text-muted">Duración</h2>
+                <p>{data.duration}</p>
+              </div>
+              {data.capacity && (
+                <div class="col-md-6">
+                  <h2 class="h6 text-uppercase text-muted">Capacidad</h2>
+                  <p>{data.capacity} personas</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {data.registrationRequired && (
+          <div class="alert alert-warning" role="alert">
+            <strong>Inscripción Requerida:</strong> Este evento requiere registro previo.
+            {data.registrationUrl && (
+              <a href={data.registrationUrl} class="alert-link ms-2">
+                Inscribirse Ahora
+              </a>
+            )}
+          </div>
+        )}
+
+        <div class="prose">
+          <Content />
+        </div>
+
+        <div class="mt-4">
+          <a href="/eventos" class="btn btn-outline-secondary">
+            ← Volver al Calendario
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+</Layout>
+```
+
+</Step>
+
+</Steps>
+
+## Alternative: API-Based Calendar
+
+For a more dynamic calendar with frequently changing events, consider using an API approach:
+
+```typescript
+// src/pages/api/events.json.ts
+import type { APIRoute } from 'astro';
+import { getCollection } from 'astro:content';
+
+export const GET: APIRoute = async ({ url }) => {
+  const events = await getCollection('events');
+  const month = url.searchParams.get('month');
+  const year = url.searchParams.get('year');
+
+  let filteredEvents = events;
+
+  if (month && year) {
+    filteredEvents = events.filter(event => {
+      const eventMonth = event.data.date.getMonth() + 1;
+      const eventYear = event.data.date.getFullYear();
+      return eventMonth === parseInt(month) && eventYear === parseInt(year);
+    });
+  }
+
+  return new Response(
+    JSON.stringify({
+      events: filteredEvents.map(e => ({
+        slug: e.slug,
+        title: e.data.title,
+        date: e.data.date,
+        time: e.data.time,
+        location: e.data.location,
+        category: e.data.category,
+      }))
+    }),
+    {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+};
+```
+
+<Note>
+  If you need to manage events through a CMS or allow staff to update events without deployments, consider integrating with a headless CMS like Sanity, Contentful, or Strapi instead of using Content Collections.
+</Note>
+
+## Best Practices
+
+### User Experience
+
+- **Calendar View**: Implement a visual calendar grid for monthly overview
+- **Filter Options**: Allow filtering by category, date range, or age group
+- **Today's Events**: Highlight events happening today prominently
+- **Time Zones**: Display times in the zoo's local timezone
+
+### Content Management
+
+- **Recurring Events**: Handle daily/weekly events efficiently (feeding times)
+- **Past Events**: Archive or hide past events automatically
+- **Event Updates**: Plan for cancellations or time changes
+- **Seasonal Events**: Mark special holiday or seasonal programming
+
+### Mobile Optimization
+
+- Use responsive card layouts for event listings
+- Ensure touch-friendly buttons and links
+- Consider a simplified day view for mobile devices
+- Enable "Add to Calendar" functionality (iCal/Google Calendar)
+
+### Performance
+
+- Pre-render event pages at build time for fast loading
+- Implement pagination for long event lists
+- Cache API responses if using dynamic data
+- Optimize event images for different screen sizes
+
+<Tip>
+  Add an "Add to Calendar" button that generates .ics files for each event. This allows visitors to save events directly to their personal calendars, increasing attendance.
+</Tip>
+
+## Integration with Other Features
+
+- **Species Catalog**: Link feeding events to specific animal pages
+- **Visit Planning**: Show today's events on the visit planning page
+- **Newsletter**: Feature upcoming events in email campaigns
+- **Homepage**: Display next 3 upcoming events on the main page
+
+## Accessibility Considerations
+
+- Use semantic HTML5 elements (`<time>`, `<article>`)
+- Provide clear labels for all form fields (filters, search)
+- Ensure keyboard navigation works for calendar controls
+- Add ARIA labels for icon-only buttons
+- Maintain sufficient color contrast for event categories

@@ -1,0 +1,198 @@
+---
+title: Installation
+description: Complete guide to installing and setting up the ZOODOM project locally
+---
+
+# Installation
+
+This guide will walk you through setting up the ZOODOM project on your local development environment.
+
+## Prerequisites
+
+### Node.js Version Requirement
+
+ZOODOM requires Node.js version **22.12.0 or higher**. This is specified in package.json:5-6:
+
+```json
+"engines": {
+  "node": ">=22.12.0"
+}
+```
+
+Verify your Node.js version:
+
+```bash
+node --version
+```
+
+If you need to upgrade, download the latest LTS version from [nodejs.org](https://nodejs.org/).
+
+## Installation Steps
+
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the ZOODOM repository to your local machine:
+
+    ```bash
+    git clone <repository-url>
+    cd zoodom
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    Install the project dependencies using your preferred package manager:
+
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+
+      ```bash yarn
+      yarn install
+      ```
+
+      ```bash pnpm
+      pnpm install
+      ```
+    </CodeGroup>
+
+    This will install the following core dependency:
+
+    - **astro**: ^6.0.4 (package.json:15)
+  </Step>
+
+  <Step title="Verify Installation">
+    Confirm that everything installed correctly by checking the Astro version:
+
+    ```bash
+    npm run astro -- --version
+    ```
+
+    You should see output similar to:
+
+    ```
+    astro v6.0.4
+    ```
+  </Step>
+</Steps>
+
+## Project Dependencies
+
+The ZOODOM project has a minimal dependency footprint for optimal performance and maintainability.
+
+### Core Dependency
+
+From package.json:14-16:
+
+```json
+"dependencies": {
+  "astro": "^6.0.4"
+}
+```
+
+### External CDN Resources
+
+The following libraries are loaded via CDN (defined in src/layouts/Layout.astro):
+
+**Bootstrap 5.3.8** (lines 9-14):
+```html
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+  crossorigin="anonymous"
+/>
+```
+
+**Popper.js 2.11.8** (lines 18-21): Required for Bootstrap tooltips and popovers
+
+**Google Fonts - Onest** (src/components/Head.astro:32-34):
+```html
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+<Note>
+  Using CDN resources reduces build size and leverages browser caching, but requires an internet connection during development.
+</Note>
+
+## Project Structure
+
+After installation, your project directory will look like this:
+
+```
+zoodom/
+├── public/              # Static assets (favicon, images, etc.)
+├── src/
+│   ├── assets/          # Project assets (images, CSS, icons)
+│   │   ├── global.css   # Global styles and design system
+│   │   ├── logo.svg     # Zoo logo
+│   │   ├── hero.png     # Hero section image
+│   │   └── texture-img.png  # Background texture
+│   ├── components/      # Reusable Astro components
+│   │   └── Head.astro   # SEO and meta tags component
+│   ├── layouts/         # Page layout templates
+│   │   └── Layout.astro # Main layout with Bootstrap
+│   └── pages/           # File-based routing
+│       └── index.astro  # Homepage
+├── astro.config.mjs     # Astro configuration
+├── package.json         # Project dependencies and scripts
+└── tsconfig.json        # TypeScript configuration
+```
+
+### Key Directories
+
+**src/assets/**
+- Contains the custom design system in `global.css` (117 lines)
+- Includes brand colors, typography, and component styles
+- Stores visual assets like logos and hero images
+
+**src/components/**
+- Reusable Astro components
+- `Head.astro` manages all SEO meta tags, Open Graph data, and external fonts
+
+**src/layouts/**
+- `Layout.astro` provides the base HTML structure (src/layouts/Layout.astro:5-31)
+- Includes Bootstrap CSS/JS and wraps page content
+
+**src/pages/**
+- File-based routing - each `.astro` file becomes a route
+- `index.astro` is the homepage with navbar and hero section (src/pages/index.astro)
+
+## Configuration Files
+
+### astro.config.mjs
+
+The Astro configuration is minimal (astro.config.mjs:1-7):
+
+```javascript
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+    site: 'https://zoodomi.netlify.app',
+});
+```
+
+**site**: Defines the production URL for generating sitemaps and canonical URLs
+
+### package.json
+
+Project metadata and configuration (package.json:1-17):
+
+```json
+{
+  "name": "zoodom",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}
+```
+
+## Next Steps
+
+Now that you have ZOODOM installed:
+
+1. [Quick Start](/quickstart) - Run the development server and start building
+2. Explore the codebase structure
+3. Review the design system in `src/assets/global.css`

@@ -1,0 +1,164 @@
+---
+title: 'Head Component'
+description: 'SEO-optimized head component for ZOODOM pages'
+icon: 'browser'
+---
+
+## Overview
+
+The `Head.astro` component provides a comprehensive SEO solution for ZOODOM pages, including meta tags, Open Graph protocol support, and canonical URL management. It's designed to be used within the `<head>` section of HTML pages.
+
+<Note>
+  This component is automatically included in the `Layout.astro` component, so you typically don't need to import it directly.
+</Note>
+
+## Props Interface
+
+The component accepts the following props defined in `~/workspace/source/src/components/Head.astro:3-8`:
+
+<ParamField path="title" type="string" default="ZOODOM - Parque Zoológico Nacional">
+  The page title displayed in browser tabs and search results. Also used for Open Graph `og:title`.
+</ParamField>
+
+<ParamField path="description" type="string" default="ZOODOM - Parque Zoológico Nacional. Descubre la fauna y flora en nuestro zoológico.">
+  Meta description for SEO and social sharing. Used for both standard meta description and Open Graph `og:description`.
+</ParamField>
+
+<ParamField path="canonicalUrl" type="string" default="https://zoodomi.netlify.app">
+  The canonical URL for the page. Helps prevent duplicate content issues and is used as the base for social image URLs.
+</ParamField>
+
+<ParamField path="image" type="string" default="/cover.png">
+  Relative path to the social sharing image. Combined with `canonicalUrl` to create the absolute `og:image` URL.
+</ParamField>
+
+## Usage
+
+```astro
+---
+import Head from '../components/Head.astro';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <Head 
+      title="Especies - ZOODOM"
+      description="Conoce las especies de animales en nuestro zoológico"
+      canonicalUrl="https://zoodomi.netlify.app/especies"
+      image="/especies-cover.png"
+    />
+  </head>
+  <body>
+    <!-- Page content -->
+  </body>
+</html>
+```
+
+## SEO Features
+
+### Basic Meta Tags
+
+The component includes essential meta tags from `~/workspace/source/src/components/Head.astro:20-27`:
+
+```astro
+<!-- Meta generales -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="description" content={description} />
+<meta name="keywords" content="zoo, zoológico, animales, naturaleza, parque, rd" />
+<meta name="author" content="Ronald Santana" />
+<!-- Titulo -->
+<title>{title}</title>
+```
+
+<Info>
+  The keywords meta tag includes: `zoo`, `zoológico`, `animales`, `naturaleza`, `parque`, `rd` to optimize for Dominican Republic zoo searches.
+</Info>
+
+### Canonical URL
+
+Canonical URL support prevents duplicate content issues (`~/workspace/source/src/components/Head.astro:31`):
+
+```astro
+<link rel="canonical" href={canonicalUrl} />
+```
+
+### Open Graph Protocol
+
+Full Open Graph support for rich social media sharing from `~/workspace/source/src/components/Head.astro:35-46`:
+
+```astro
+<!-- Meta de Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="es_DO" />
+<meta property="og:site_name" content="ZOODOM" />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Portada de ZOODOM - Parque Zoológico Nacional" />
+```
+
+<Note>
+  The locale is set to `es_DO` (Spanish - Dominican Republic) and images are optimized for Facebook/LinkedIn sharing at 1200x630 pixels.
+</Note>
+
+### Social Image URL Resolution
+
+The component automatically resolves relative image paths to absolute URLs (`~/workspace/source/src/components/Head.astro:17`):
+
+```astro
+const socialImageUrl = new URL(image, canonicalUrl).href;
+```
+
+This ensures social media platforms can properly fetch the sharing image.
+
+## Typography
+
+The component loads the Onest font family from Google Fonts (`~/workspace/source/src/components/Head.astro:32-34`):
+
+```astro
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+<Tip>
+  The font uses `preconnect` for optimized loading performance and includes all weight variants (100-900).
+</Tip>
+
+## Global Styles
+
+The component imports global CSS (`~/workspace/source/src/components/Head.astro:2`):
+
+```astro
+import '../assets/global.css';
+```
+
+## Example: Custom Page
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import Head from '../components/Head.astro';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <Head 
+      title="Galería de Fotos - ZOODOM"
+      description="Explora nuestra galería de fotos de animales y momentos especiales en ZOODOM"
+      canonicalUrl="https://zoodomi.netlify.app/galeria"
+      image="/galeria-cover.png"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
+```

@@ -1,0 +1,422 @@
+---
+title: Custom CSS
+description: Documentation of custom CSS classes and styles that extend Bootstrap
+---
+
+# Custom CSS
+
+While Bootstrap provides the structural foundation, custom CSS in `global.css` adds brand-specific styling, custom components, and unique design elements.
+
+## Custom Component Classes
+
+These classes define specific component styles used throughout the site.
+
+### Logo (.logo)
+
+Controls the logo dimensions:
+
+```css
+.logo {
+    width: 110px;
+    height: auto;
+}
+```
+
+**Location:** `src/assets/global.css:69-72`
+
+<Note>
+  While `.logo` is defined in CSS, the actual logo uses inline `width` attributes with responsive values (80px mobile, 110px desktop) combined with Bootstrap's display utilities.
+</Note>
+
+**Usage Example:**
+
+```html
+<!-- Mobile -->
+<img
+  src={logo.src}
+  class="img-fluid d-inline d-sm-none"
+  width="80"
+  alt="Logo"
+/>
+<!-- Desktop -->
+<img
+  src={logo.src}
+  class="img-fluid d-none d-sm-inline"
+  width="110"
+  alt="Logo"
+/>
+```
+
+**Location:** `src/pages/index.astro:13-25`
+
+### Hero Image (.hero-img)
+
+Sizes the hero image:
+
+```css
+.hero-img {
+    max-width: 600px;
+    height: auto;
+}
+```
+
+**Location:** `src/assets/global.css:73-76`
+
+**Usage Example:**
+
+```html
+<img 
+  src={HeroImg.src} 
+  class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5" 
+  alt="Hero Image"
+>
+```
+
+**Location:** `src/pages/index.astro:60`
+
+The hero image combines:
+- `.img-fluid` (Bootstrap) - Responsive scaling
+- `.hero-img` (Custom) - Maximum width constraint
+- `position-absolute` (Bootstrap) - Absolute positioning
+- `bottom-0 end-0` (Bootstrap) - Anchored to bottom-right
+
+### Brand Button (.btn-brand)
+
+The primary button style with brand colors and interactive states:
+
+```css
+.btn-brand {
+    background-color: var(--color-brand-green-800);
+    color: var(--color-neutral-white-900);
+    border: none;
+}
+.btn-brand:hover {
+    background-color: var(--color-brand-green-700);
+    color: var(--color-neutral-white-900);
+}
+.btn-brand:active {
+    background-color: var(--color-brand-green-600);
+    color: var(--color-neutral-white-900);
+}
+```
+
+**Location:** `src/assets/global.css:88-100`
+
+**Usage Example:**
+
+```html
+<button class="btn btn-brand px-5 py-2 rounded-pill">Reservar ahora</button>
+```
+
+**Location:** `src/pages/index.astro:57`
+
+This combines:
+- `.btn` (Bootstrap) - Base button styles
+- `.btn-brand` (Custom) - Brand color overrides
+- `.px-5 .py-2` (Bootstrap) - Padding
+- `.rounded-pill` (Bootstrap) - Fully rounded corners
+
+#### Button State Colors:
+
+| State | Variable | Hex Value |
+|-------|----------|----------|
+| Default | `--color-brand-green-800` | #246C32 |
+| Hover | `--color-brand-green-700` | #388E49 |
+| Active | `--color-brand-green-600` | #51B063 |
+
+### Primary Text Color (.text-primary)
+
+Applies brand green to text:
+
+```css
+.text-primary {
+    color: var(--color-brand-green-800);
+}
+```
+
+**Location:** `src/assets/global.css:101-103`
+
+<Warning>
+  This overrides Bootstrap's default `.text-primary` class, which normally uses blue. In ZOODOM, primary text is brand green.
+</Warning>
+
+### Active Navigation Link (a.active)
+
+Styles the active navigation item:
+
+```css
+a.active {
+    color: var(--color-brand-green-800) !important;
+    font-weight: 600;
+}
+```
+
+**Location:** `src/assets/global.css:104-107`
+
+**Usage Example:**
+
+```html
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="#">Inicio</a>
+</li>
+```
+
+**Location:** `src/pages/index.astro:42`
+
+The active link receives:
+- Brand green color
+- Semibold font weight (600)
+- `!important` to override Bootstrap's default nav-link colors
+
+### Navbar Toggler Border
+
+Customizes the mobile menu button:
+
+```css
+.navbar-toggler {
+    border-color: var(--color-brand-green-800);
+}
+```
+
+**Location:** `src/assets/global.css:115-117`
+
+This replaces Bootstrap's default gray border with brand green.
+
+## Section-Specific Styling
+
+### Animals Section (#animals)
+
+Creates a textured background for the animals section:
+
+```css
+#animals {
+    background-image: url('./texture-img.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+```
+
+**Location:** `src/assets/global.css:108-114`
+
+**Usage Example:**
+
+```html
+<section id="animals" class="py-5">
+  <section class="container">
+    <!-- Content -->
+  </section>
+</section>
+```
+
+**Location:** `src/pages/index.astro:65-72`
+
+#### Background Properties:
+
+| Property | Value | Effect |
+|----------|-------|--------|
+| `background-image` | `url('./texture-img.png')` | Loads texture image |
+| `background-size` | `cover` | Scales to cover entire section |
+| `background-repeat` | `no-repeat` | Prevents tiling |
+| `background-position` | `center` | Centers the image |
+| `background-attachment` | `fixed` | Creates parallax effect |
+
+<Tip>
+  The `background-attachment: fixed` creates a parallax scrolling effect where the background image stays in place while content scrolls over it.
+</Tip>
+
+## Typography Customization
+
+### Heading Styles
+
+Custom heading styles that work alongside Bootstrap's typography:
+
+```css
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--color-neutral-black-900);
+}
+```
+
+**Location:** `src/assets/global.css:77-81`
+
+**Usage Example:**
+
+```html
+<h1 class="display-1 fw-bold">Bienvenido a nuestro zoológico</h1>
+```
+
+**Location:** `src/pages/index.astro:55`
+
+Combines:
+- Custom `h1` styles (64px, 700 weight)
+- `.display-1` (Bootstrap) - Display heading variant
+- `.fw-bold` (Bootstrap) - Bold font weight
+
+### Paragraph Styles
+
+Default paragraph styling:
+
+```css
+p {
+    font-size: 18px;
+    color: var(--color-neutral-gray-900);
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+```
+
+**Location:** `src/assets/global.css:82-87`
+
+**Usage Example:**
+
+```html
+<p>Planea una salida en familia a nuestro parque zoológico nacional para que te diviertas en una experiencia inolvidable.</p>
+```
+
+**Location:** `src/pages/index.astro:56`
+
+## Global Styles
+
+### CSS Reset
+
+Ensures consistent styling across browsers:
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+```
+
+**Location:** `src/assets/global.css:59-63`
+
+### Body Defaults
+
+Sets default font, background, and text color:
+
+```css
+html, body {
+    font-family: 'Onest', sans-serif;
+    background-color: var(--color-neutral-white-900);
+    color: var(--color-neutral-black-900);
+}
+```
+
+**Location:** `src/assets/global.css:64-68`
+
+## How Custom CSS Extends Bootstrap
+
+The relationship between Bootstrap and custom CSS:
+
+### Bootstrap Provides:
+- Base component structure (`.btn`, `.navbar`, etc.)
+- Grid system and layout utilities
+- Responsive breakpoints and utilities
+- JavaScript interactions
+
+### Custom CSS Adds:
+- Brand color overrides
+- Custom component dimensions (`.logo`, `.hero-img`)
+- Brand-specific button styles (`.btn-brand`)
+- Active state styling (`a.active`)
+- Section backgrounds (`#animals`)
+- Typography customization
+
+### Example: Button Combination
+
+```html
+<button class="btn btn-brand px-5 py-2 rounded-pill">Reservar ahora</button>
+```
+
+| Class | Source | Purpose |
+|-------|--------|--------|
+| `.btn` | Bootstrap | Base button structure |
+| `.btn-brand` | Custom | Brand color & states |
+| `.px-5` | Bootstrap | Horizontal padding |
+| `.py-2` | Bootstrap | Vertical padding |
+| `.rounded-pill` | Bootstrap | Fully rounded borders |
+
+### Example: Navigation Link
+
+```html
+<a class="nav-link active" aria-current="page" href="#">Inicio</a>
+```
+
+| Class | Source | Purpose |
+|-------|--------|--------|
+| `.nav-link` | Bootstrap | Base navigation link styles |
+| `.active` | Custom (targets `a.active`) | Brand green color & bold weight |
+
+## File Organization
+
+All custom CSS is centralized in a single file:
+
+```
+src/
+└── assets/
+    ├── global.css          # All custom CSS
+    └── texture-img.png     # Background texture
+```
+
+**Import location:** `src/components/Head.astro:2`
+
+```javascript
+import '../assets/global.css';
+```
+
+<Note>
+  Centralizing custom CSS in `global.css` makes it easy to maintain and ensures consistent styling across all pages.
+</Note>
+
+## Best Practices
+
+<AccordionGroup>
+  <Accordion title="Use CSS Variables">
+    Always reference color variables instead of hardcoded hex values:
+    
+    ```css
+    /* Good */
+    .custom-class {
+      color: var(--color-brand-green-800);
+    }
+    
+    /* Bad */
+    .custom-class {
+      color: #246C32;
+    }
+    ```
+  </Accordion>
+
+  <Accordion title="Combine Bootstrap and Custom Classes">
+    Leverage Bootstrap utilities for layout and spacing, custom classes for brand styling:
+    
+    ```html
+    <button class="btn btn-brand px-5 py-2 rounded-pill">
+    ```
+  </Accordion>
+
+  <Accordion title="Override with Specificity">
+    When overriding Bootstrap, use specific selectors or `!important` sparingly:
+    
+    ```css
+    a.active {
+      color: var(--color-brand-green-800) !important;
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Design System" icon="palette" href="/styling/design-system">
+    Explore all available CSS variables and colors
+  </Card>
+  <Card title="Bootstrap Integration" icon="bootstrap" href="/styling/bootstrap-integration">
+    Learn about Bootstrap classes and utilities
+  </Card>
+</CardGroup>

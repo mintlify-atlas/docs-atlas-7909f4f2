@@ -1,0 +1,332 @@
+---
+title: Components
+description: Documentation for reusable Astro components including Head.astro and its props interface
+---
+
+# Components
+
+Components are reusable pieces of UI that can be imported into pages and layouts. ZOODOM currently has one component that handles all HTML `<head>` metadata.
+
+## Head.astro
+
+The `Head.astro` component manages all meta tags, SEO configuration, Open Graph data, and external resources like fonts.
+
+**Location:** `src/components/Head.astro`
+
+### Props Interface
+
+The component accepts four optional props for customizing metadata:
+
+```typescript
+interface Props {
+    title?: string;
+    description?: string;
+    canonicalUrl?: string;
+    image?: string;
+}
+```
+
+Source: `src/components/Head.astro:3-8`
+
+### Default Values
+
+All props have sensible defaults for the ZOODOM brand:
+
+```typescript
+const {
+    title = 'ZOODOM - Parque Zoológico Nacional',
+    description = 'ZOODOM - Parque Zoológico Nacional. Descubre la fauna y flora en nuestro zoológico.',
+    canonicalUrl = 'https://zoodomi.netlify.app',
+    image = '/cover.png',
+} = Astro.props;
+```
+
+Source: `src/components/Head.astro:10-15`
+
+<Info>
+When no props are provided, the component uses default ZOODOM branding values. This makes it easy to use without configuration on most pages.
+</Info>
+
+### Social Image URL Generation
+
+The component constructs the full social image URL for Open Graph:
+
+```typescript
+const socialImageUrl = new URL(image, canonicalUrl).href;
+```
+
+Source: `src/components/Head.astro:17`
+
+This ensures the image path is always absolute, even if a relative path is provided.
+
+## Component Implementation
+
+### Basic Meta Tags
+
+```astro
+<!-- Meta generales -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="description" content={description} />
+<meta name="keywords" content="zoo, zoológico, animales, naturaleza, parque, rd" />
+<meta name="author" content="Ronald Santana" />
+```
+
+Source: `src/components/Head.astro:20-25`
+
+**Key elements:**
+- UTF-8 character encoding for international text
+- Responsive viewport meta tag
+- Dynamic description from props
+- Static keywords for SEO
+- Author attribution
+
+### Title Tag
+
+```astro
+<!-- Titulo -->
+<title>{title}</title>
+```
+
+Source: `src/components/Head.astro:26-27`
+
+The title is dynamically set from props or defaults to "ZOODOM - Parque Zoológico Nacional".
+
+### Global Styles
+
+```astro
+<!-- CSS -->
+<link rel="stylesheet" href="/src/assets/main.css" />
+```
+
+Source: `src/components/Head.astro:28-29`
+
+<Warning>
+This line references `/src/assets/main.css`, but the actual file is `global.css`. This may need to be corrected.
+</Warning>
+
+### Font Integration
+
+```astro
+<!-- Fuentes -->
+<link rel="canonical" href={canonicalUrl} />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+Source: `src/components/Head.astro:30-34`
+
+**Font loading strategy:**
+- `preconnect` to Google Fonts domains for faster loading
+- Onest font family with variable weights (100-900)
+- `display=swap` for better perceived performance
+
+### Open Graph Meta Tags
+
+```astro
+<!-- Meta de Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="es_DO" />
+<meta property="og:site_name" content="ZOODOM" />
+<meta property="og:url" content={canonicalUrl} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={socialImageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Portada de ZOODOM - Parque Zoológico Nacional" />
+```
+
+Source: `src/components/Head.astro:35-46`
+
+**Open Graph features:**
+- `og:type` - Marked as website
+- `og:locale` - Spanish (Dominican Republic) locale
+- `og:image` - Uses computed `socialImageUrl`
+- Image dimensions - 1200x630 (optimal for social sharing)
+- Alt text for accessibility
+
+<Note>
+The Open Graph image dimensions (1200x630) follow Facebook and Twitter's recommended size for link previews.
+</Note>
+
+## Usage Examples
+
+### Default Usage (No Props)
+
+Most common usage in Layout.astro:
+
+```astro
+---
+import Head from "../components/Head.astro";
+---
+
+<head>
+	<Head />
+	<!-- Additional head elements -->
+</head>
+```
+
+Source: `src/layouts/Layout.astro:2,8`
+
+This renders with all default values:
+- Title: "ZOODOM - Parque Zoológico Nacional"
+- Description: "ZOODOM - Parque Zoológico Nacional. Descubre la fauna y flora en nuestro zoológico."
+- URL: "https://zoodomi.netlify.app"
+- Image: "/cover.png"
+
+### Custom Props Usage
+
+For a custom page with specific metadata:
+
+```astro
+---
+import Head from "../components/Head.astro";
+---
+
+<head>
+	<Head 
+		title="Especies - ZOODOM"
+		description="Conoce todas las especies de animales en ZOODOM"
+		canonicalUrl="https://zoodomi.netlify.app/especies"
+		image="/especies-cover.png"
+	/>
+</head>
+```
+
+### Partial Props Override
+
+You can override just the props you need:
+
+```astro
+<Head 
+	title="Blog - ZOODOM"
+	description="Noticias y actualizaciones del zoológico"
+/>
+```
+
+The `canonicalUrl` and `image` will use default values.
+
+## Component Pattern Benefits
+
+<CardGroup cols={2}>
+  <Card title="Reusability" icon="recycle">
+    Single source of truth for metadata across all pages
+  </Card>
+  
+  <Card title="Type Safety" icon="shield-check">
+    TypeScript interface ensures correct prop usage
+  </Card>
+  
+  <Card title="SEO Consistency" icon="magnifying-glass">
+    All pages get proper Open Graph and meta tags
+  </Card>
+  
+  <Card title="Easy Customization" icon="sliders">
+    Override individual props while keeping defaults
+  </Card>
+</CardGroup>
+
+## Global CSS Import
+
+The Head component imports the global stylesheet:
+
+```astro
+---
+import '../assets/global.css';
+// ...
+---
+```
+
+Source: `src/components/Head.astro:2`
+
+This import happens in the component's frontmatter, making the styles available globally through Astro's CSS bundling.
+
+### What's in global.css?
+
+The `global.css` file defines:
+
+- **CSS Custom Properties** - Color system with brand green, accent, and extended palettes
+- **Typography** - Onest font family configuration
+- **Base Styles** - Reset and global element styles
+- **Utility Classes** - Brand buttons, text colors, active states
+- **Component Styles** - Navbar, hero image, texture backgrounds
+
+See [Assets](/structure/assets) for complete CSS documentation.
+
+## Props TypeScript Interface Details
+
+### title (optional)
+
+**Type:** `string`  
+**Default:** `'ZOODOM - Parque Zoológico Nacional'`  
+**Used in:**
+- `<title>` tag
+- `og:title` Open Graph meta
+
+### description (optional)
+
+**Type:** `string`  
+**Default:** `'ZOODOM - Parque Zoológico Nacional. Descubre la fauna y flora en nuestro zoológico.'`  
+**Used in:**
+- `<meta name="description">` tag
+- `og:description` Open Graph meta
+
+### canonicalUrl (optional)
+
+**Type:** `string`  
+**Default:** `'https://zoodomi.netlify.app'`  
+**Used in:**
+- `<link rel="canonical">` tag
+- `og:url` Open Graph meta
+- Base URL for computing `socialImageUrl`
+
+### image (optional)
+
+**Type:** `string`  
+**Default:** `'/cover.png'`  
+**Used in:**
+- Computed into `socialImageUrl` for `og:image` meta
+
+<Tip>
+Use relative paths for images (e.g., `/cover.png`) and the component will automatically construct the full URL using `canonicalUrl`.
+</Tip>
+
+## Creating New Components
+
+To add more reusable components to ZOODOM:
+
+1. Create a new `.astro` file in `src/components/`
+2. Define a TypeScript interface for props (if needed)
+3. Import and use in pages or layouts
+
+**Example structure:**
+
+```astro
+---
+interface Props {
+  text: string;
+  variant?: 'primary' | 'secondary';
+}
+
+const { text, variant = 'primary' } = Astro.props;
+---
+
+<button class={`btn btn-${variant}`}>
+  {text}
+</button>
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Layouts" icon="layer-group" href="/structure/layouts">
+    See how Head.astro is used in Layout.astro
+  </Card>
+  
+  <Card title="Assets" icon="image" href="/structure/assets">
+    Learn about global.css and the color system
+  </Card>
+</CardGroup>

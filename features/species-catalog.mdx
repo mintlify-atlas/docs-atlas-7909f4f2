@@ -1,0 +1,334 @@
+---
+title: Species Catalog
+description: Learn how to implement the species catalog feature to showcase zoo animals with detailed information
+---
+
+# Species Catalog
+
+The Species Catalog ("Fichas de especies") is a core feature of the ZOODOM website that allows visitors to explore detailed information about the zoo's animals. This feature showcases each species with rich content including images, descriptions, habitat information, and conservation status.
+
+## Purpose
+
+The species catalog serves multiple objectives:
+
+- **Educational**: Provide visitors with detailed information about animals before or after their visit
+- **Engagement**: Create an interactive browsing experience with rich media content
+- **Conservation Awareness**: Highlight conservation status and the zoo's role in species preservation
+- **SEO**: Generate content-rich pages that improve organic search visibility
+
+## Data Structure
+
+Each species entry should contain the following information:
+
+- **Common Name**: The animal's everyday name (e.g., "León Africano")
+- **Scientific Name**: Latin taxonomic name (e.g., "Panthera leo")
+- **Description**: Detailed information about the animal's characteristics and behavior
+- **Habitat**: Natural environment and geographic distribution
+- **Conservation Status**: IUCN Red List status (Vulnerable, Endangered, etc.)
+- **Diet**: What the animal eats (carnivore, herbivore, omnivore)
+- **Fun Facts**: Engaging trivia to capture visitor interest
+- **Images**: High-quality photos of the animal
+
+## Implementation Guide
+
+<Steps>
+
+<Step title="Create Content Collection">
+
+Set up an Astro Content Collection for species data. First, create the content directory structure:
+
+```bash
+mkdir -p src/content/species
+```
+
+Define the schema in `src/content/config.ts`:
+
+```typescript
+import { defineCollection, z } from 'astro:content';
+
+const speciesCollection = defineCollection({
+  type: 'content',
+  schema: ({ image }) => z.object({
+    commonName: z.string(),
+    scientificName: z.string(),
+    category: z.enum(['mammals', 'birds', 'reptiles', 'amphibians', 'fish']),
+    habitat: z.string(),
+    conservationStatus: z.enum([
+      'Least Concern',
+      'Near Threatened',
+      'Vulnerable',
+      'Endangered',
+      'Critically Endangered',
+      'Extinct in the Wild',
+      'Extinct'
+    ]),
+    diet: z.enum(['carnivore', 'herbivore', 'omnivore']),
+    lifespan: z.string().optional(),
+    weight: z.string().optional(),
+    image: image(),
+    gallery: z.array(image()).optional(),
+    publishedDate: z.date(),
+  }),
+});
+
+export const collections = {
+  'species': speciesCollection,
+};
+```
+
+</Step>
+
+<Step title="Create Species Data Files">
+
+Create individual MDX files for each species in `src/content/species/`. For example, `src/content/species/leon-africano.mdx`:
+
+```mdx
+---
+commonName: León Africano
+scientificName: Panthera leo
+category: mammals
+habitat: Sabanas y praderas de África subsahariana
+conservationStatus: Vulnerable
+diet: carnivore
+lifespan: 10-14 años en libertad, hasta 20 en cautiverio
+weight: Machos 190 kg, hembras 130 kg
+image: ./images/leon-africano.jpg
+publishedDate: 2026-03-01
+---
+
+## Descripción
+
+El león africano es uno de los felinos más grandes del mundo y un símbolo icónico de la fauna africana. Los machos son reconocibles por su distintiva melena, que puede variar en color desde rubio hasta negro.
+
+## Comportamiento
+
+Los leones son los únicos felinos que viven en grupos sociales llamados manadas, típicamente compuestas por hembras emparentadas, sus crías y uno o varios machos adultos.
+
+## Conservación
+
+La población de leones africanos ha disminuido drásticamente en las últimas décadas debido a la pérdida de hábitat y conflictos con humanos. Los programas de conservación son esenciales para su supervivencia.
+
+## Datos Curiosos
+
+- El rugido de un león puede escucharse hasta a 8 km de distancia
+- Las hembras realizan la mayor parte de la caza para la manada
+- Pueden dormir hasta 20 horas al día
+```
+
+</Step>
+
+<Step title="Create Species Index Page">
+
+Create `src/pages/especies/index.astro` to display all species:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const allSpecies = await getCollection('species');
+const sortedSpecies = allSpecies.sort((a, b) => 
+  a.data.commonName.localeCompare(b.data.commonName)
+);
+
+// Group by category
+const speciesByCategory = sortedSpecies.reduce((acc, species) => {
+  const category = species.data.category;
+  if (!acc[category]) acc[category] = [];
+  acc[category].push(species);
+  return acc;
+}, {});
+
+const categoryLabels = {
+  mammals: 'Mamíferos',
+  birds: 'Aves',
+  reptiles: 'Reptiles',
+  amphibians: 'Anfibios',
+  fish: 'Peces'
+};
+---
+
+<Layout title="Catálogo de Especies">
+  <main class="container py-5">
+    <h1 class="display-4 fw-bold mb-4">Nuestras Especies</h1>
+    <p class="lead mb-5">
+      Descubre la increíble diversidad de animales que habitan en nuestro zoológico.
+    </p>
+
+    {Object.entries(speciesByCategory).map(([category, species]) => (
+      <section class="mb-5">
+        <h2 class="h3 mb-4">{categoryLabels[category]}</h2>
+        <div class="row g-4">
+          {species.map((animal) => (
+            <div class="col-md-6 col-lg-4">
+              <a href={`/especies/${animal.slug}`} class="text-decoration-none">
+                <div class="card h-100 shadow-sm hover-lift">
+                  <img 
+                    src={animal.data.image.src} 
+                    alt={animal.data.commonName}
+                    class="card-img-top"
+                    style="height: 250px; object-fit: cover;"
+                  />
+                  <div class="card-body">
+                    <h3 class="h5 card-title">{animal.data.commonName}</h3>
+                    <p class="text-muted fst-italic small">{animal.data.scientificName}</p>
+                    <span class={`badge bg-${getStatusColor(animal.data.conservationStatus)}`}>
+                      {animal.data.conservationStatus}
+                    </span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </main>
+</Layout>
+
+<script>
+  function getStatusColor(status) {
+    const colors = {
+      'Least Concern': 'success',
+      'Near Threatened': 'info',
+      'Vulnerable': 'warning',
+      'Endangered': 'danger',
+      'Critically Endangered': 'danger',
+    };
+    return colors[status] || 'secondary';
+  }
+</script>
+```
+
+</Step>
+
+<Step title="Create Individual Species Pages">
+
+Create `src/pages/especies/[...slug].astro` for dynamic species detail pages:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const speciesEntries = await getCollection('species');
+  return speciesEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { data } = entry;
+---
+
+<Layout title={data.commonName}>
+  <article class="container py-5">
+    <div class="row">
+      <div class="col-lg-8">
+        <h1 class="display-4 fw-bold mb-2">{data.commonName}</h1>
+        <p class="text-muted fst-italic fs-5 mb-4">{data.scientificName}</p>
+        
+        <img 
+          src={data.image.src} 
+          alt={data.commonName}
+          class="img-fluid rounded shadow mb-4"
+        />
+
+        <div class="prose">
+          <Content />
+        </div>
+      </div>
+
+      <aside class="col-lg-4">
+        <div class="card sticky-top" style="top: 2rem;">
+          <div class="card-body">
+            <h2 class="h5 mb-3">Información</h2>
+            
+            <dl>
+              <dt class="fw-bold">Estado de Conservación</dt>
+              <dd>
+                <span class={`badge bg-${getStatusColor(data.conservationStatus)}`}>
+                  {data.conservationStatus}
+                </span>
+              </dd>
+
+              <dt class="fw-bold mt-3">Hábitat</dt>
+              <dd>{data.habitat}</dd>
+
+              <dt class="fw-bold mt-3">Dieta</dt>
+              <dd class="text-capitalize">{data.diet}</dd>
+
+              {data.lifespan && (
+                <>
+                  <dt class="fw-bold mt-3">Esperanza de Vida</dt>
+                  <dd>{data.lifespan}</dd>
+                </>
+              )}
+
+              {data.weight && (
+                <>
+                  <dt class="fw-bold mt-3">Peso</dt>
+                  <dd>{data.weight}</dd>
+                </>
+              )}
+            </dl>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </article>
+</Layout>
+```
+
+</Step>
+
+</Steps>
+
+<Note>
+  Use Astro's built-in image optimization by importing images in your content files. This automatically generates responsive images and optimizes file sizes for better performance.
+</Note>
+
+## Best Practices
+
+### SEO Optimization
+
+- Use descriptive slugs based on common names (e.g., `/especies/leon-africano`)
+- Include meta descriptions with key information about each species
+- Add structured data (Schema.org) for animal information
+- Use proper heading hierarchy (h1 for species name, h2 for sections)
+
+### Content Strategy
+
+- Start with 10-15 popular species, then expand gradually
+- Include high-quality, professional images (minimum 1200px width)
+- Write descriptions at a general audience reading level
+- Highlight conservation stories to engage visitors emotionally
+
+### Accessibility
+
+- Provide alt text for all images describing the animal
+- Ensure sufficient color contrast for conservation status badges
+- Use semantic HTML elements
+- Make sure the catalog is keyboard navigable
+
+### Performance
+
+- Lazy load images on the species index page
+- Implement pagination if you have more than 50 species
+- Consider adding filters by category, conservation status, or habitat
+- Use Astro's static generation for fast page loads
+
+<Tip>
+  Consider adding a search feature and filtering options once you have more than 20 species. This improves user experience and helps visitors find specific animals quickly.
+</Tip>
+
+## Future Enhancements
+
+- **Interactive Map**: Show where each species lives in the zoo
+- **Feeding Times**: Display when visitors can see feeding demonstrations
+- **Audio Guides**: Add animal sounds and keeper commentary
+- **Virtual Tours**: 360-degree photos of animal habitats
+- **Adoption Program**: Link to symbolic adoption options for conservation support

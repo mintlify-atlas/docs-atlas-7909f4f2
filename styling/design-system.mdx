@@ -1,0 +1,283 @@
+---
+title: Design System
+description: Complete documentation of ZOODOM's color palette, typography, and design tokens
+---
+
+# Design System
+
+The ZOODOM design system is built using CSS custom properties (variables) defined in `global.css`. All colors, typography, and design tokens are centralized for consistency.
+
+## Color Palette
+
+All colors are defined as CSS variables in the `:root` selector, making them globally accessible throughout the application.
+
+### Brand Green (Primary)
+
+The primary brand color used for buttons, links, and key UI elements.
+
+```css
+/* Green */
+--color-brand-green-900: #144A1F;
+--color-brand-green-800: #246C32;
+--color-brand-green-700: #388E49;
+--color-brand-green-600: #51B063;
+--color-brand-green-500: #6DD281;
+--color-brand-green-400: #8EF4A2;
+--color-brand-green-300: #ACFFBC;
+--color-brand-green-200: #C4FFD0;
+--color-brand-green-100: #DCFFE3;
+--color-brand-green-50: #F4FFF6;
+```
+
+**Location:** `src/assets/global.css:5-14`
+
+<AccordionGroup>
+  <Accordion title="Color Usage Examples">
+    - **900-800**: Primary buttons, active states
+    - **700-600**: Hover states, emphasis
+    - **500-400**: Borders, icons
+    - **300-50**: Backgrounds, subtle accents
+  </Accordion>
+</AccordionGroup>
+
+### Accent Green (Secondary)
+
+A complementary green shade used for secondary actions and variety.
+
+```css
+/* Accent */
+--color-accent-green-900: #2E4F19;
+--color-accent-green-800: #416C26;
+--color-accent-green-700: #558936;
+--color-accent-green-600: #6BA747;
+--color-accent-green-500: #82C45A;
+--color-accent-green-400: #9AE16F;
+--color-accent-green-300: #B3FE87;
+--color-accent-green-200: #CAFFAB;
+--color-accent-green-100: #E1FFCF;
+--color-accent-green-50: #F7FFF3;
+```
+
+**Location:** `src/assets/global.css:16-25`
+
+### Extended Colors
+
+Additional colors for status indicators, alerts, and decorative elements.
+
+#### Blue
+
+```css
+/* Blue */
+--color-extended-blue-900: #113E4D;
+--color-extended-blue-500: #6BD8FC;
+--color-extended-blue-100: #C4F0FF;
+```
+
+**Location:** `src/assets/global.css:27-29`
+
+#### Yellow
+
+```css
+/* yellow */
+--color-extended-yellow-900: #5C4100;
+--color-extended-yellow-500: #FFB401;
+--color-extended-yellow-100: #FFEAB8;
+```
+
+**Location:** `src/assets/global.css:31-33`
+
+#### Orange
+
+```css
+/* orange */
+--color-extended-orange-900: #5B3700;
+--color-extended-orange-500: #FE9900;
+--color-extended-orange-100: #FFE2B7;
+```
+
+**Location:** `src/assets/global.css:35-37`
+
+#### Red
+
+```css
+/* Red */
+--color-extended-red-900: #5C0600;
+--color-extended-red-500: #FF2414;
+--color-extended-red-100: #FFC1BD;
+```
+
+**Location:** `src/assets/global.css:39-41`
+
+### Neutral Colors
+
+Grays, blacks, and whites for text, backgrounds, and borders.
+
+```css
+/* black */
+--color-neutral-overlay-900: #00000077;
+/* White */
+--color-neutral-white-900: #FFFFFF;
+/* Gray */
+--color-neutral-black-900: #222222;
+--color-neutral-gray-900: #4B4B4B;
+--color-neutral-gray-800: #5F5F5F; 
+--color-neutral-gray-700: #747474;
+--color-neutral-gray-600: #888888;
+--color-neutral-gray-500: #9C9C9C;
+--color-neutral-gray-400: #B1B1B1;
+--color-neutral-gray-300: #C5C5C5;
+--color-neutral-gray-200: #DADADA;
+--color-neutral-gray-100: #EEEEEE;
+--color-neutral-gray-50: #FFFFFF;
+```
+
+**Location:** `src/assets/global.css:43-57`
+
+<Note>
+  The `--color-neutral-overlay-900` includes transparency (`#00000077`) for modal overlays and image darkening effects.
+</Note>
+
+## Naming Convention
+
+All CSS variables follow a consistent naming pattern:
+
+```
+--color-{category}-{name}-{shade}
+```
+
+### Categories:
+- **brand** - Primary brand colors
+- **accent** - Secondary brand colors
+- **extended** - Additional palette colors
+- **neutral** - Grays, blacks, whites
+
+### Shades:
+- **900** - Darkest
+- **800-100** - Gradual lightening
+- **50** - Lightest
+
+<Tip>
+  Higher numbers (900) are darker, lower numbers (50) are lighter. This convention makes it intuitive to select shades.
+</Tip>
+
+## Typography
+
+### Font Family
+
+The entire site uses the **Onest** font family:
+
+```css
+html, body {
+    font-family: 'Onest', sans-serif;
+    background-color: var(--color-neutral-white-900);
+    color: var(--color-neutral-black-900);
+}
+```
+
+**Location:** `src/assets/global.css:64-68`
+
+Onest is loaded from Google Fonts with variable weights (100-900):
+
+```html
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+### Heading Styles
+
+```css
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--color-neutral-black-900);
+}
+```
+
+**Location:** `src/assets/global.css:77-81`
+
+### Paragraph Styles
+
+```css
+p {
+    font-size: 18px;
+    color: var(--color-neutral-gray-900);
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+```
+
+**Location:** `src/assets/global.css:82-87`
+
+## Button Styles
+
+The `.btn-brand` class provides the primary button styling:
+
+```css
+.btn-brand {
+    background-color: var(--color-brand-green-800);
+    color: var(--color-neutral-white-900);
+    border: none;
+}
+.btn-brand:hover {
+    background-color: var(--color-brand-green-700);
+    color: var(--color-neutral-white-900);
+}
+.btn-brand:active {
+    background-color: var(--color-brand-green-600);
+    color: var(--color-neutral-white-900);
+}
+```
+
+**Location:** `src/assets/global.css:88-100`
+
+### Button States:
+- **Default**: `--color-brand-green-800` (#246C32)
+- **Hover**: `--color-brand-green-700` (#388E49)
+- **Active**: `--color-brand-green-600` (#51B063)
+
+## Global Reset
+
+The design system includes a CSS reset for consistency:
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+```
+
+**Location:** `src/assets/global.css:59-63`
+
+## Using Design Tokens
+
+### In CSS
+
+```css
+.custom-element {
+    background-color: var(--color-brand-green-800);
+    color: var(--color-neutral-white-900);
+}
+```
+
+### In JavaScript/Astro
+
+```javascript
+<div style={`background-color: var(--color-brand-green-800)`}>
+  Content
+</div>
+```
+
+<Warning>
+  Always use CSS variables instead of hardcoded hex values to ensure design consistency and make future updates easier.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom CSS" icon="css3" href="/styling/custom-css">
+    Learn about custom component styles
+  </Card>
+  <Card title="Bootstrap Integration" icon="bootstrap" href="/styling/bootstrap-integration">
+    See how Bootstrap works with the design system
+  </Card>
+</CardGroup>

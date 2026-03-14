@@ -1,0 +1,359 @@
+---
+title: Bootstrap Integration
+description: How Bootstrap 5.3.8 is integrated and used in the ZOODOM project
+---
+
+# Bootstrap Integration
+
+ZOODOM uses **Bootstrap 5.3.8** loaded via CDN for responsive layout, components, and utilities. The framework provides the structural foundation while custom CSS handles brand-specific styling.
+
+## CDN Integration
+
+Bootstrap is loaded in the main layout file using the official CDN:
+
+```html
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+  crossorigin="anonymous"
+/>
+```
+
+**Location:** `src/layouts/Layout.astro:9-14`
+
+<Info>
+  The CDN approach eliminates the need for local Bootstrap files and ensures fast loading through global CDN networks.
+</Info>
+
+## JavaScript Dependencies
+
+Bootstrap's interactive components require JavaScript. Three scripts are loaded at the end of the `<body>`:
+
+### 1. Popper.js
+
+Required for dropdowns, tooltips, and popovers:
+
+```html
+<script
+  src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+  integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+  crossorigin="anonymous"></script>
+```
+
+**Location:** `src/layouts/Layout.astro:18-21`
+
+### 2. Bootstrap JS
+
+Core Bootstrap JavaScript:
+
+```html
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+  integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+  crossorigin="anonymous"></script>
+```
+
+**Location:** `src/layouts/Layout.astro:22-25`
+
+### 3. Bootstrap Bundle
+
+Bundle including Popper.js (alternative to loading separately):
+
+```html
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+  crossorigin="anonymous"></script>
+```
+
+**Location:** `src/layouts/Layout.astro:26-29`
+
+<Note>
+  All scripts include `integrity` attributes for Subresource Integrity (SRI) verification, ensuring the files haven't been tampered with.
+</Note>
+
+## Responsive Grid System
+
+Bootstrap's 12-column grid system is used extensively throughout the site.
+
+### Container
+
+Provides responsive fixed-width containers:
+
+```html
+<section class="container px-3 px-lg-5 py-3">
+  <!-- Content -->
+</section>
+```
+
+**Example:** `src/pages/index.astro:10`
+
+### Row and Columns
+
+Two-column responsive layout for the hero section:
+
+```html
+<section class="row d-flex justify-content-between align-items-center">
+  <section class="col-lg-6 col-md-6 col-12">
+    <h1 class="display-1 fw-bold">Bienvenido a nuestro zoológico</h1>
+    <p>Planea una salida en familia...</p>
+    <button class="btn btn-brand px-5 py-2 rounded-pill">Reservar ahora</button>
+  </section>
+  <section class="col-lg-6 col-md-6 col-12 d-none d-md-block">
+    <img src={HeroImg.src} class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5" alt="Hero Image">
+  </section>
+</section>
+```
+
+**Location:** `src/pages/index.astro:53-62`
+
+#### Breakpoint Behavior:
+- **Mobile (< 768px)**: Single column (`.col-12`)
+- **Tablet (≥ 768px)**: Two columns (`.col-md-6`)
+- **Desktop (≥ 992px)**: Two columns (`.col-lg-6`)
+
+## Navbar Component
+
+The navigation uses Bootstrap's responsive navbar:
+
+```html
+<nav class="navbar navbar-expand-lg navbar-light">
+  <section class="container px-3 px-lg-5 py-3">
+    <a class="navbar-brand me-0" href="#">
+      <!-- Logo -->
+    </a>
+
+    <button
+      class="navbar-toggler border-0"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <section class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-lg-auto mb-2 mb-lg-0 gap-lg-4 pt-3 pt-lg-0">
+        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Inicio</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Especies</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Galeria</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+      </ul>
+    </section>
+  </section>
+</nav>
+```
+
+**Location:** `src/pages/index.astro:9-50`
+
+### Key Navbar Classes:
+
+| Class | Purpose |
+|-------|--------|
+| `.navbar` | Base navbar component |
+| `.navbar-expand-lg` | Collapse on screens < 992px |
+| `.navbar-light` | Light color scheme |
+| `.navbar-toggler` | Mobile hamburger menu button |
+| `.navbar-collapse` | Collapsible content container |
+| `.navbar-nav` | Navigation list container |
+| `.nav-item` | Individual navigation item |
+| `.nav-link` | Navigation link styling |
+
+### Navbar Toggle Behavior:
+
+The navbar toggler uses Bootstrap's JavaScript to control the collapse:
+
+```html
+<button
+  class="navbar-toggler border-0"
+  type="button"
+  data-bs-toggle="collapse"
+  data-bs-target="#mainNavbar"
+  aria-controls="mainNavbar"
+  aria-expanded="false"
+  aria-label="Toggle navigation"
+>
+  <span class="navbar-toggler-icon"></span>
+</button>
+```
+
+**Location:** `src/pages/index.astro:28-38`
+
+<Accordion title="Data Attributes Explained">
+  - `data-bs-toggle="collapse"` - Activates Bootstrap's collapse plugin
+  - `data-bs-target="#mainNavbar"` - Targets the element to collapse/expand
+  - `aria-controls` - Accessibility: identifies the controlled element
+  - `aria-expanded` - Accessibility: indicates collapse state
+</Accordion>
+
+## Responsive Utilities
+
+Bootstrap's display utilities control element visibility across breakpoints.
+
+### Responsive Logo Sizing
+
+```html
+<!-- Mobile: 80px width -->
+<img
+  src={logo.src}
+  class="img-fluid d-inline d-sm-none"
+  width="80"
+  alt="Logo"
+/>
+<!-- Tablet/Desktop: 110px width -->
+<img
+  src={logo.src}
+  class="img-fluid d-none d-sm-inline"
+  width="110"
+  alt="Logo"
+/>
+```
+
+**Location:** `src/pages/index.astro:13-25`
+
+#### Display Classes:
+- `.d-inline` - Display inline
+- `.d-sm-none` - Hide on screens ≥ 576px
+- `.d-none` - Hide on all screens
+- `.d-sm-inline` - Display inline on screens ≥ 576px
+
+### Hiding Hero Image on Mobile
+
+```html
+<section class="col-lg-6 col-md-6 col-12 d-none d-md-block">
+  <img src={HeroImg.src} class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5" alt="Hero Image">
+</section>
+```
+
+**Location:** `src/pages/index.astro:59-61`
+
+The hero image is hidden on mobile (< 768px) and shown on tablet and above using `.d-none .d-md-block`.
+
+## Spacing Utilities
+
+Bootstrap's spacing utilities (margin and padding) are used throughout:
+
+### Padding Classes:
+
+```html
+<!-- Responsive padding -->
+<section class="container px-3 px-lg-5 py-3">
+
+<!-- Button padding -->
+<button class="btn btn-brand px-5 py-2 rounded-pill">
+```
+
+| Class | Property | Value |
+|-------|----------|-------|
+| `px-3` | padding-left/right | 1rem |
+| `px-lg-5` | padding-left/right on lg+ | 3rem |
+| `py-3` | padding-top/bottom | 1rem |
+| `px-5` | padding-left/right | 3rem |
+| `py-2` | padding-top/bottom | 0.5rem |
+| `pe-5` | padding-right | 3rem |
+
+### Margin Classes:
+
+```html
+<ul class="navbar-nav ms-lg-auto mb-2 mb-lg-0 gap-lg-4 pt-3 pt-lg-0">
+```
+
+| Class | Property | Value |
+|-------|----------|-------|
+| `ms-lg-auto` | margin-left on lg+ | auto |
+| `mb-2` | margin-bottom | 0.5rem |
+| `mb-lg-0` | margin-bottom on lg+ | 0 |
+| `pt-3` | padding-top | 1rem |
+| `pt-lg-0` | padding-top on lg+ | 0 |
+| `me-0` | margin-right | 0 |
+
+## Flexbox Utilities
+
+Bootstrap's flexbox classes align and distribute content:
+
+```html
+<section class="row d-flex justify-content-between align-items-center">
+```
+
+| Class | Purpose |
+|-------|--------|
+| `d-flex` | Enables flexbox |
+| `justify-content-between` | Distributes items with space between |
+| `align-items-center` | Vertically centers items |
+
+## Position Utilities
+
+```html
+<header class="position-relative py-md-5 py-lg-5">
+
+<img src={HeroImg.src} class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5">
+```
+
+| Class | Purpose |
+|-------|--------|
+| `position-relative` | Creates positioning context |
+| `position-absolute` | Absolute positioning |
+| `bottom-0` | Anchors to bottom |
+| `end-0` | Anchors to right edge |
+
+## Image Utilities
+
+```html
+<img src={logo.src} class="img-fluid" alt="Logo">
+```
+
+The `.img-fluid` class makes images responsive:
+
+```css
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+```
+
+## Custom Styles Override
+
+Custom CSS can override Bootstrap defaults. Example with the navbar toggler:
+
+```css
+.navbar-toggler {
+    border-color: var(--color-brand-green-800);
+}
+```
+
+**Location:** `src/assets/global.css:115-117`
+
+This changes the toggler border color to match the brand green.
+
+<Warning>
+  When overriding Bootstrap styles, ensure custom CSS is loaded AFTER Bootstrap to maintain specificity.
+</Warning>
+
+## Bootstrap Breakpoints
+
+Understanding Bootstrap's responsive breakpoints:
+
+| Breakpoint | Screen Width | Prefix |
+|------------|-------------|--------|
+| Extra small | < 576px | (none) |
+| Small | ≥ 576px | `sm` |
+| Medium | ≥ 768px | `md` |
+| Large | ≥ 992px | `lg` |
+| Extra large | ≥ 1200px | `xl` |
+| XXL | ≥ 1400px | `xxl` |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Custom CSS" icon="css3" href="/styling/custom-css">
+    Learn about custom component styles that extend Bootstrap
+  </Card>
+  <Card title="Design System" icon="palette" href="/styling/design-system">
+    Explore the color palette and design tokens
+  </Card>
+</CardGroup>

@@ -1,0 +1,257 @@
+---
+title: Build Process
+description: Understanding the Astro build process for ZOODOM
+---
+
+# Build Process
+
+ZOODOM uses Astro's build system to generate a static website. This guide explains the build process, available npm scripts, and how to run production builds locally.
+
+## Available npm Scripts
+
+The ZOODOM project includes the following npm scripts defined in `package.json`:
+
+```json package.json
+{
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  }
+}
+```
+
+### Development Server
+
+Start the development server with hot module replacement:
+
+```bash
+npm run dev
+```
+
+**What it does:**
+- Starts Astro's development server on `http://localhost:4321`
+- Enables hot module replacement (HMR) for instant updates
+- Shows helpful error messages in the browser
+- No build output - files are served directly from source
+
+<Note>
+The development server is optimized for speed and developer experience, not production performance.
+</Note>
+
+### Production Build
+
+Create an optimized production build:
+
+```bash
+npm run build
+```
+
+**What it does:**
+- Compiles all `.astro`, `.md`, and `.mdx` files
+- Bundles and optimizes JavaScript and CSS
+- Processes images and static assets
+- Generates HTML pages for all routes
+- Outputs everything to the `dist/` directory
+- Creates a sitemap using the `site` config from `astro.config.mjs`
+
+**Build output structure:**
+
+```
+dist/
+├── index.html
+├── animals/
+│   └── index.html
+├── _astro/
+│   ├── [hashed-css-files].css
+│   └── [hashed-js-files].js
+└── [other-static-assets]
+```
+
+### Preview Production Build
+
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+**What it does:**
+- Serves the contents of the `dist/` directory
+- Runs a local server (typically on `http://localhost:4321`)
+- Mimics production environment behavior
+- Requires running `npm run build` first
+
+<Warning>
+Always run `npm run build` before `npm run preview`. The preview command only serves existing built files.
+</Warning>
+
+### Direct Astro CLI
+
+Run Astro CLI commands directly:
+
+```bash
+npm run astro -- --help
+```
+
+This allows you to use any Astro CLI command:
+
+```bash
+# Add an integration
+npm run astro add tailwind
+
+# Check for issues
+npm run astro check
+
+# Show Astro info
+npm run astro info
+```
+
+## Build Process Workflow
+
+<Steps>
+  <Step title="Install Dependencies">
+    Before building, ensure all dependencies are installed:
+
+    ```bash
+    npm install
+    ```
+
+    <Note>
+    Requires Node.js >= 22.12.0 as specified in `package.json`.
+    </Note>
+  </Step>
+
+  <Step title="Run the Build">
+    Execute the build command:
+
+    ```bash
+    npm run build
+    ```
+
+    Monitor the console output for:
+    - Pages being generated
+    - Asset optimization progress
+    - Build warnings or errors
+    - Final build statistics
+  </Step>
+
+  <Step title="Verify the Output">
+    Check the `dist/` directory:
+
+    ```bash
+    ls -la dist/
+    ```
+
+    Ensure all expected pages and assets are present.
+  </Step>
+
+  <Step title="Test Locally">
+    Preview the production build:
+
+    ```bash
+    npm run preview
+    ```
+
+    Visit `http://localhost:4321` to test the site.
+  </Step>
+</Steps>
+
+## Understanding the dist/ Directory
+
+The `dist/` directory contains your production-ready static site:
+
+- **HTML files**: Pre-rendered pages for each route
+- **`_astro/` folder**: Optimized and hashed CSS/JS bundles
+- **Static assets**: Images, fonts, and other public files
+- **Root files**: `robots.txt`, `sitemap.xml`, etc.
+
+<Note>
+The `dist/` directory is git-ignored by default. Never commit it to your repository.
+</Note>
+
+## Build Optimizations
+
+Astro automatically applies these optimizations during build:
+
+### Code Splitting
+
+- JavaScript is split into smaller chunks
+- Only necessary code is loaded per page
+- Shared dependencies are bundled separately
+
+### Asset Optimization
+
+- CSS is minified and bundled
+- JavaScript is minified and tree-shaken
+- Images can be optimized (with proper configuration)
+- Files are content-hashed for cache busting
+
+### HTML Generation
+
+- All pages are pre-rendered to static HTML
+- Zero JavaScript by default (unless you add client-side components)
+- SEO-friendly output with proper meta tags
+
+## Local Production Testing
+
+To fully test the production build locally:
+
+```bash
+# Clean previous builds (optional)
+rm -rf dist/
+
+# Build the site
+npm run build
+
+# Preview the build
+npm run preview
+```
+
+This workflow ensures:
+- Fresh build without cached artifacts
+- Production-like environment
+- Accurate performance testing
+
+## Build Performance Tips
+
+1. **Clean builds**: Delete `dist/` periodically to avoid stale files
+2. **Node version**: Use Node.js 22.12.0 or higher for best performance
+3. **Dependencies**: Keep Astro and dependencies up to date
+4. **Asset size**: Optimize images before adding to the project
+
+## Troubleshooting Build Issues
+
+### Build Fails
+
+Check for:
+- Syntax errors in `.astro`, `.md`, or `.mdx` files
+- Missing dependencies in `package.json`
+- Incorrect Node.js version
+
+```bash
+# Check Node version
+node --version
+
+# Should output: v22.12.0 or higher
+```
+
+### Missing Pages in dist/
+
+Ensure:
+- Pages are in the `src/pages/` directory
+- File names follow Astro's routing conventions
+- No build errors in the console output
+
+### Large Bundle Sizes
+
+Investigate:
+- Unused dependencies being imported
+- Large images not optimized
+- Client-side JavaScript usage
+
+## Next Steps
+
+- [Deploying to Netlify](/deployment/netlify) - Deploy your built site
+- [Configuration](/deployment/configuration) - Customize build behavior

@@ -1,0 +1,630 @@
+---
+title: Assets
+description: Documentation for images, styles, and static assets in the ZOODOM project
+---
+
+# Assets
+
+ZOODOM organizes assets into two locations: `src/assets/` for build-processed assets and `public/` for static files served as-is.
+
+## Asset Directories
+
+### src/assets/
+
+Processed assets that are imported in code:
+
+```
+src/assets/
+├── global.css       # Global styles and CSS variables (117 lines)
+├── hero.png         # Hero section image
+├── logo.svg         # ZOODOM logo vector graphic
+└── texture-img.png  # Background texture for sections
+```
+
+**Characteristics:**
+- Imported via frontmatter or component code
+- Optimized at build time
+- Content-hashed filenames in production
+- Type-safe imports with TypeScript
+
+### public/
+
+Static assets served without processing:
+
+```
+public/
+└── cover.png        # Open Graph social sharing image (669KB)
+```
+
+**Characteristics:**
+- Served as-is from root URL
+- No optimization or transformation
+- Referenced by absolute path (e.g., `/cover.png`)
+- Used for meta tags and external references
+
+<Info>
+Use `src/assets/` for images imported in components. Use `public/` for files referenced in meta tags or that need a predictable URL.
+</Info>
+
+## Global Styles (global.css)
+
+**Location:** `src/assets/global.css`  
+**Lines:** 117  
+**Imported in:** `src/components/Head.astro:2`
+
+### CSS Custom Properties
+
+The stylesheet defines a comprehensive design system using CSS variables.
+
+#### Brand Green Palette
+
+```css
+:root {
+    /* Green */
+    --color-brand-green-900: #144A1F;
+    --color-brand-green-800: #246C32;
+    --color-brand-green-700: #388E49;
+    --color-brand-green-600: #51B063;
+    --color-brand-green-500: #6DD281;
+    --color-brand-green-400: #8EF4A2;
+    --color-brand-green-300: #ACFFBC;
+    --color-brand-green-200: #C4FFD0;
+    --color-brand-green-100: #DCFFE3;
+    --color-brand-green-50: #F4FFF6;
+}
+```
+
+Source: `src/assets/global.css:1-14`
+
+**Usage example:**
+
+```css
+.btn-brand {
+    background-color: var(--color-brand-green-800);
+}
+```
+
+#### Accent Green Palette
+
+```css
+/* Accent */
+--color-accent-green-900: #2E4F19;
+--color-accent-green-800: #416C26;
+--color-accent-green-700: #558936;
+--color-accent-green-600: #6BA747;
+--color-accent-green-500: #82C45A;
+--color-accent-green-400: #9AE16F;
+--color-accent-green-300: #B3FE87;
+--color-accent-green-200: #CAFFAB;
+--color-accent-green-100: #E1FFCF;
+--color-accent-green-50: #F7FFF3;
+```
+
+Source: `src/assets/global.css:15-25`
+
+A secondary green palette for accents and highlights.
+
+#### Extended Color Palettes
+
+```css
+/* Blue */
+--color-extended-blue-900: #113E4D;
+--color-extended-blue-500: #6BD8FC;
+--color-extended-blue-100: #C4F0FF;
+
+/* Yellow */
+--color-extended-yellow-900: #5C4100;
+--color-extended-yellow-500: #FFB401;
+--color-extended-yellow-100: #FFEAB8;
+
+/* Orange */
+--color-extended-orange-900: #5B3700;
+--color-extended-orange-500: #FE9900;
+--color-extended-orange-100: #FFE2B7;
+
+/* Red */
+--color-extended-red-900: #5C0600;
+--color-extended-red-500: #FF2414;
+--color-extended-red-100: #FFC1BD;
+```
+
+Source: `src/assets/global.css:26-41`
+
+Extended palettes for status colors, alerts, and additional UI needs.
+
+#### Neutral Colors
+
+```css
+/* Black */
+--color-neutral-overlay-900: #00000077;
+
+/* White */
+--color-neutral-white-900: #FFFFFF;
+
+/* Gray */
+--color-neutral-black-900: #222222;
+--color-neutral-gray-900: #4B4B4B;
+--color-neutral-gray-800: #5F5F5F; 
+--color-neutral-gray-700: #747474;
+--color-neutral-gray-600: #888888;
+--color-neutral-gray-500: #9C9C9C;
+--color-neutral-gray-400: #B1B1B1;
+--color-neutral-gray-300: #C5C5C5;
+--color-neutral-gray-200: #DADADA;
+--color-neutral-gray-100: #EEEEEE;
+--color-neutral-gray-50: #FFFFFF;
+```
+
+Source: `src/assets/global.css:42-57`
+
+### Base Styles
+
+#### CSS Reset
+
+```css
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+```
+
+Source: `src/assets/global.css:59-63`
+
+Universal reset for consistent styling across browsers.
+
+#### HTML and Body
+
+```css
+html, body {
+    font-family: 'Onest', sans-serif;
+    background-color: var(--color-neutral-white-900);
+    color: var(--color-neutral-black-900);
+}
+```
+
+Source: `src/assets/global.css:64-68`
+
+**Default styles:**
+- Font: Onest (variable weight from Google Fonts)
+- Background: White
+- Text color: Near-black (#222222)
+
+### Component-Specific Styles
+
+#### Logo
+
+```css
+.logo {
+    width: 110px;
+    height: auto;
+}
+```
+
+Source: `src/assets/global.css:69-72`
+
+<Note>
+This class is defined but not used in `index.astro`. The page uses inline width attributes instead.
+</Note>
+
+#### Hero Image
+
+```css
+.hero-img {
+    max-width: 600px;
+    height: auto;
+}
+```
+
+Source: `src/assets/global.css:73-76`
+
+Applied to the hero section image in `index.astro:60`.
+
+### Typography Styles
+
+#### Headings
+
+```css
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--color-neutral-black-900);
+}
+```
+
+Source: `src/assets/global.css:77-81`
+
+Large, bold headings at 64px.
+
+#### Paragraphs
+
+```css
+p {
+    font-size: 18px;
+    color: var(--color-neutral-gray-900);
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+```
+
+Source: `src/assets/global.css:82-87`
+
+Default paragraph styling with spacing and medium gray color.
+
+### Button Styles
+
+#### Brand Button
+
+```css
+.btn-brand {
+    background-color: var(--color-brand-green-800);
+    color: var(--color-neutral-white-900);
+    border: none;
+}
+
+.btn-brand:hover {
+    background-color: var(--color-brand-green-700);
+    color: var(--color-neutral-white-900);
+}
+
+.btn-brand:active {
+    background-color: var(--color-brand-green-600);
+    color: var(--color-neutral-white-900);
+}
+```
+
+Source: `src/assets/global.css:88-100`
+
+**Button states:**
+- Default: `#246C32` (green-800)
+- Hover: `#388E49` (green-700)
+- Active: `#51B063` (green-600)
+
+Used in: `src/pages/index.astro:57`
+
+### Utility Classes
+
+#### Text Primary
+
+```css
+.text-primary {
+    color: var(--color-brand-green-800);
+}
+```
+
+Source: `src/assets/global.css:101-103`
+
+Applies brand green color to text.
+
+#### Active Link
+
+```css
+a.active {
+    color: var(--color-brand-green-800) !important;
+    font-weight: 600;
+}
+```
+
+Source: `src/assets/global.css:104-107`
+
+Active navigation link styling - green with semi-bold weight.
+
+### Section Backgrounds
+
+#### Animals Section
+
+```css
+#animals {
+    background-image: url('./texture-img.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+```
+
+Source: `src/assets/global.css:108-114`
+
+**Background features:**
+- Uses `texture-img.png` from same directory
+- Cover sizing for full section coverage
+- Fixed attachment for parallax effect
+- Targets `#animals` section in `index.astro:65`
+
+<Tip>
+The `background-attachment: fixed` creates a parallax scrolling effect where the background stays in place while content scrolls.
+</Tip>
+
+#### Navbar Toggler
+
+```css
+.navbar-toggler {
+    border-color: var(--color-brand-green-800);
+}
+```
+
+Source: `src/assets/global.css:115-117`
+
+Gives the mobile menu button a green border to match the brand.
+
+## Importing Assets in Astro
+
+### Image Imports
+
+Astro processes image imports and returns an optimized object:
+
+```astro
+---
+import logo from '../assets/logo.svg';
+import HeroImg from '../assets/hero.png';
+---
+
+<img src={logo.src} alt="Logo" />
+<img src={HeroImg.src} alt="Hero" />
+```
+
+Source: `src/pages/index.astro:3-4,14,60`
+
+**Import object structure:**
+
+```typescript
+{
+  src: '/assets/logo.abc123.svg',  // Optimized path with hash
+  width: 200,                       // Image width (for raster)
+  height: 100,                      // Image height (for raster)
+  format: 'svg'                     // Image format
+}
+```
+
+<Info>
+SVG imports only have `src` and `format`. PNG/JPG imports include width and height for responsive images.
+</Info>
+
+### CSS Imports
+
+CSS files are imported in the frontmatter:
+
+```astro
+---
+import '../assets/global.css';
+---
+```
+
+Source: `src/components/Head.astro:2`
+
+Astro bundles the CSS and includes it in the page `<head>`.
+
+### Background Image URLs
+
+In CSS, use relative paths from the CSS file location:
+
+```css
+#animals {
+    background-image: url('./texture-img.png');
+}
+```
+
+Astro resolves the path relative to `global.css` and processes the image.
+
+## Asset Files
+
+### logo.svg
+
+**Location:** `src/assets/logo.svg`  
+**Type:** SVG vector graphic  
+**Used in:** `src/pages/index.astro:3,14,21`
+
+**Usage:**
+
+```astro
+---
+import logo from'../assets/logo.svg';
+---
+
+<img src={logo.src} width="110" alt="Logo" />
+```
+
+Rendered at two sizes:
+- Mobile: 80px
+- Desktop: 110px
+
+### hero.png
+
+**Location:** `src/assets/hero.png`  
+**Type:** PNG raster image  
+**Used in:** `src/pages/index.astro:4,60`
+
+**Usage:**
+
+```astro
+---
+import HeroImg from '../assets/hero.png';
+---
+
+<img src={HeroImg.src} class="hero-img" alt="Hero Image">
+```
+
+Styled with `.hero-img` class for max-width of 600px.
+
+### texture-img.png
+
+**Location:** `src/assets/texture-img.png`  
+**Type:** PNG background texture  
+**Used in:** `src/assets/global.css:109`
+
+**Usage:**
+
+```css
+#animals {
+    background-image: url('./texture-img.png');
+}
+```
+
+Provides a fixed parallax background for the animals section.
+
+### cover.png
+
+**Location:** `public/cover.png`  
+**Type:** PNG social sharing image  
+**Size:** 669KB  
+**Used in:** `src/components/Head.astro:14,42`
+
+**Usage:**
+
+```typescript
+const {
+    image = '/cover.png',
+} = Astro.props;
+```
+
+```html
+<meta property="og:image" content={socialImageUrl} />
+```
+
+Served from root URL for Open Graph social media previews.
+
+<Warning>
+At 669KB, this image is quite large for web use. Consider optimizing it to under 200KB for better performance.
+</Warning>
+
+## Asset Optimization
+
+### Automatic Optimization
+
+Astro automatically optimizes assets imported in `src/assets/`:
+
+- **Images** - Compressed and resized
+- **CSS** - Minified and bundled
+- **Filenames** - Content hashing for cache busting
+
+### Build Output
+
+After running `npm run build`, assets are copied to `dist/` with optimized names:
+
+```
+dist/
+├── assets/
+│   ├── logo.a1b2c3d4.svg
+│   ├── hero.e5f6g7h8.png
+│   └── global.i9j0k1l2.css
+└── cover.png  (from public/, unchanged)
+```
+
+### Manual Optimization Tips
+
+<AccordionGroup>
+  <Accordion title="Optimize cover.png" icon="image">
+    The social sharing image is 669KB. Recommended optimizations:
+    
+    - Resize to exactly 1200x630px (Open Graph standard)
+    - Compress to 80-90% quality
+    - Convert to WebP if browser support allows
+    - Target size: under 200KB
+    
+    Tools: [TinyPNG](https://tinypng.com/), [Squoosh](https://squoosh.app/)
+  </Accordion>
+  
+  <Accordion title="Use WebP for hero.png" icon="bolt">
+    Convert PNG images to WebP format for smaller file sizes:
+    
+    ```astro
+    ---
+    import heroWebP from '../assets/hero.webp';
+    import heroPNG from '../assets/hero.png';
+    ---
+    
+    <picture>
+      <source srcset={heroWebP.src} type="image/webp">
+      <img src={heroPNG.src} alt="Hero">
+    </picture>
+    ```
+  </Accordion>
+  
+  <Accordion title="Lazy load images" icon="clock">
+    Add lazy loading for below-the-fold images:
+    
+    ```astro
+    <img src={HeroImg.src} loading="lazy" alt="Hero">
+    ```
+    
+    The browser will defer loading until the image is near the viewport.
+  </Accordion>
+</AccordionGroup>
+
+## Google Fonts Integration
+
+The Onest font is loaded via Google Fonts in the Head component:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+Source: `src/components/Head.astro:32-34`
+
+**Font features:**
+- Variable weights from 100 to 900
+- `display=swap` for FOIT (Flash of Invisible Text) prevention
+- Preconnect hints for faster loading
+
+## Best Practices
+
+<CardGroup cols={2}>
+  <Card title="Use src/assets/" icon="folder">
+    Import images that appear in components. Astro optimizes them automatically.
+  </Card>
+  
+  <Card title="Use public/" icon="globe">
+    Place files that need predictable URLs or are referenced externally.
+  </Card>
+  
+  <Card title="Import in frontmatter" icon="code">
+    Always import assets in the `---` frontmatter section for type safety.
+  </Card>
+  
+  <Card title="Use .src property" icon="arrow-right">
+    Access the optimized path via `imageName.src` in templates.
+  </Card>
+</CardGroup>
+
+### Import Examples
+
+<CodeGroup>
+
+```astro Image in Page
+---
+import myImage from '../assets/photo.png';
+---
+
+<img src={myImage.src} alt="Description" />
+```
+
+```astro CSS in Component
+---
+import '../assets/styles.css';
+---
+
+<div class="styled">
+  Content
+</div>
+```
+
+```astro Public Asset Reference
+<!-- No import needed -->
+<img src="/cover.png" alt="Cover" />
+```
+
+</CodeGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Components" icon="puzzle-piece" href="/structure/components">
+    See how global.css is imported in Head.astro
+  </Card>
+  
+  <Card title="Pages" icon="file" href="/structure/pages">
+    Learn how index.astro imports and uses images
+  </Card>
+</CardGroup>

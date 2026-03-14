@@ -1,0 +1,307 @@
+---
+title: Configuration
+description: Configuring Astro for the ZOODOM project
+---
+
+# Configuration
+
+ZOODOM's build and deployment behavior is configured through `astro.config.mjs`. This guide explains the current configuration and how to extend it.
+
+## Current Configuration
+
+The ZOODOM project uses a minimal Astro configuration:
+
+```js astro.config.mjs
+// @ts-check
+import { defineConfig } from 'astro/config';
+
+// https://astro.build/config
+export default defineConfig({
+    site: 'https://zoodomi.netlify.app',
+});
+```
+
+## Site Configuration
+
+The `site` option is crucial for generating correct URLs throughout your site.
+
+### Purpose
+
+The `site` configuration (`https://zoodomi.netlify.app`) is used for:
+
+1. **Canonical URLs**: Generates proper canonical links in page headers
+2. **Sitemap Generation**: Creates accurate sitemap.xml with full URLs
+3. **RSS Feeds**: Builds correct URLs for feed entries
+4. **Social Sharing**: Ensures Open Graph and Twitter Card URLs are absolute
+
+### Example Usage
+
+In your Astro components, `site` becomes available via `Astro.site`:
+
+```astro
+---
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<link rel="canonical" href={canonicalURL} />
+```
+
+<Warning>
+Always update the `site` value when deploying to a different domain. Incorrect URLs can harm SEO and break functionality.
+</Warning>
+
+## Adding Integrations
+
+Astro integrations extend functionality. Here are common integrations for ZOODOM:
+
+### Sitemap
+
+Generate an automatic sitemap:
+
+```bash
+npm run astro add sitemap
+```
+
+This updates your config:
+
+```js astro.config.mjs
+import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  integrations: [sitemap()],
+});
+```
+
+### Tailwind CSS
+
+Add Tailwind for styling:
+
+```bash
+npm run astro add tailwind
+```
+
+Updated config:
+
+```js astro.config.mjs
+import { defineConfig } from 'astro/config';
+import tailwind from '@astrojs/tailwind';
+
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  integrations: [tailwind()],
+});
+```
+
+### MDX Support
+
+Enable MDX for enhanced Markdown:
+
+```bash
+npm run astro add mdx
+```
+
+Updated config:
+
+```js astro.config.mjs
+import { defineConfig } from 'astro/config';
+import mdx from '@astrojs/mdx';
+
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  integrations: [mdx()],
+});
+```
+
+## Common Configuration Options
+
+Here are additional configuration options you might need:
+
+### Output Directory
+
+Change the build output directory (default is `dist`):
+
+```js astro.config.mjs
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  outDir: './build',
+});
+```
+
+<Note>
+If you change `outDir`, update your deployment configuration accordingly.
+</Note>
+
+### Base Path
+
+Deploy to a subdirectory:
+
+```js astro.config.mjs
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  base: '/zoo',
+});
+```
+
+Your site will be accessible at `https://zoodomi.netlify.app/zoo/`.
+
+### Server Configuration
+
+Customize the development server:
+
+```js astro.config.mjs
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  server: {
+    port: 3000,
+    host: true, // Listen on all addresses
+  },
+});
+```
+
+### Markdown Options
+
+Configure Markdown processing:
+
+```js astro.config.mjs
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  markdown: {
+    shikiConfig: {
+      theme: 'dracula',
+      wrap: true,
+    },
+  },
+});
+```
+
+### Build Options
+
+Control build behavior:
+
+```js astro.config.mjs
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  build: {
+    format: 'directory', // or 'file'
+    inlineStylesheets: 'auto',
+  },
+});
+```
+
+## Multi-Integration Configuration
+
+Combine multiple integrations:
+
+```js astro.config.mjs
+import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
+import tailwind from '@astrojs/tailwind';
+import mdx from '@astrojs/mdx';
+
+export default defineConfig({
+  site: 'https://zoodomi.netlify.app',
+  integrations: [
+    sitemap(),
+    tailwind(),
+    mdx(),
+  ],
+});
+```
+
+## Environment-Specific Configuration
+
+Use environment variables for different deployments:
+
+```js astro.config.mjs
+import { defineConfig } from 'astro/config';
+
+const site = process.env.SITE_URL || 'https://zoodomi.netlify.app';
+
+export default defineConfig({
+  site,
+});
+```
+
+Set `SITE_URL` in your deployment environment variables.
+
+## TypeScript Support
+
+The `// @ts-check` comment at the top of `astro.config.mjs` enables TypeScript checking for the config file:
+
+```js
+// @ts-check
+import { defineConfig } from 'astro/config';
+```
+
+This provides:
+- IntelliSense in VS Code
+- Type checking for configuration options
+- Auto-completion for integration options
+
+<Note>
+You can convert to TypeScript by renaming to `astro.config.ts` and using TypeScript syntax.
+</Note>
+
+## Configuration Validation
+
+Astro validates your configuration on startup. Common errors:
+
+### Invalid Site URL
+
+```
+Error: `site` must be a valid URL
+```
+
+**Fix**: Ensure `site` includes the protocol:
+
+```js
+// ✓ Correct
+site: 'https://zoodomi.netlify.app'
+
+// ✗ Incorrect
+site: 'zoodomi.netlify.app'
+```
+
+### Missing Integration Package
+
+```
+Error: Cannot find package '@astrojs/sitemap'
+```
+
+**Fix**: Install the integration:
+
+```bash
+npm install @astrojs/sitemap
+```
+
+## Best Practices
+
+1. **Keep it simple**: Only add configuration options you need
+2. **Document changes**: Comment complex configurations
+3. **Test locally**: Run `npm run build` after config changes
+4. **Version control**: Always commit `astro.config.mjs` changes
+5. **Read docs**: Check [Astro's official docs](https://docs.astro.build/en/reference/configuration-reference/) for all options
+
+## Configuration File Location
+
+The configuration file must be at the project root:
+
+```
+zoodom/
+├── astro.config.mjs  ← Configuration file
+├── package.json
+├── src/
+└── public/
+```
+
+<Warning>
+Astro will not detect the config file if it's in a subdirectory.
+</Warning>
+
+## Next Steps
+
+- [Deploying to Netlify](/deployment/netlify) - Deploy your configured site
+- [Build Process](/deployment/build-process) - Understand how configuration affects builds
+- [Astro Configuration Reference](https://docs.astro.build/en/reference/configuration-reference/) - Official documentation

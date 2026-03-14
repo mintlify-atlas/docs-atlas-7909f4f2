@@ -1,0 +1,120 @@
+---
+title: Styling Overview
+description: Understanding the ZOODOM styling architecture combining Bootstrap and custom CSS
+---
+
+# Styling Overview
+
+ZOODOM uses a hybrid styling approach that combines **Bootstrap 5.3.8** for layout and components with a **custom CSS design system** for brand-specific styling.
+
+## Architecture
+
+The styling system consists of three main layers:
+
+1. **Bootstrap Framework** - Provides responsive grid, components, and utilities
+2. **Custom CSS Variables** - Defines the complete color palette and design tokens
+3. **Custom Component Styles** - Extends Bootstrap with brand-specific styles
+
+## File Structure
+
+```
+src/
+├── assets/
+│   └── global.css          # Design system & custom styles
+├── components/
+│   └── Head.astro          # Imports global.css
+└── layouts/
+    └── Layout.astro        # Bootstrap CDN integration
+```
+
+## Style Loading Order
+
+### 1. Google Fonts (Head.astro)
+
+The Onest font family is loaded from Google Fonts:
+
+```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@100..900&display=swap" rel="stylesheet">
+```
+
+**Location:** `src/components/Head.astro:32-34`
+
+### 2. Global CSS (Head.astro)
+
+Custom CSS variables and styles are imported:
+
+```javascript
+import '../assets/global.css';
+```
+
+**Location:** `src/components/Head.astro:2`
+
+### 3. Bootstrap CSS (Layout.astro)
+
+Bootstrap is loaded via CDN in the layout:
+
+```html
+<link
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+  crossorigin="anonymous"
+/>
+```
+
+**Location:** `src/layouts/Layout.astro:9-14`
+
+## Typography
+
+The entire site uses the **Onest** font family with weights ranging from 100 to 900:
+
+```css
+html, body {
+    font-family: 'Onest', sans-serif;
+    background-color: var(--color-neutral-white-900);
+    color: var(--color-neutral-black-900);
+}
+```
+
+**Location:** `src/assets/global.css:64-68`
+
+## Bootstrap + Custom CSS Relationship
+
+### Bootstrap Provides:
+- Responsive grid system (`container`, `row`, `col-*`)
+- Component structure (`navbar`, `btn`, etc.)
+- Utility classes (`d-flex`, `py-5`, `px-3`, etc.)
+- JavaScript interactions (navbar collapse, dropdowns)
+
+### Custom CSS Provides:
+- Complete brand color palette via CSS variables
+- Brand-specific button styles (`.btn-brand`)
+- Custom component styles (`.logo`, `.hero-img`)
+- Typography overrides
+- Section-specific styling (`#animals` background)
+
+## Key Custom Classes
+
+| Class | Purpose | Location |
+|-------|---------|----------|
+| `.btn-brand` | Primary brand button with green background | global.css:88-100 |
+| `.text-primary` | Brand green text color | global.css:101-103 |
+| `.logo` | Logo sizing | global.css:69-72 |
+| `.hero-img` | Hero image sizing | global.css:73-76 |
+| `a.active` | Active navigation link styling | global.css:104-107 |
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Design System" icon="palette" href="/styling/design-system">
+    Explore the complete color palette and design tokens
+  </Card>
+  <Card title="Bootstrap Integration" icon="bootstrap" href="/styling/bootstrap-integration">
+    Learn how Bootstrap is integrated and used
+  </Card>
+  <Card title="Custom CSS" icon="css3" href="/styling/custom-css">
+    Understand custom styles and component classes
+  </Card>
+</CardGroup>

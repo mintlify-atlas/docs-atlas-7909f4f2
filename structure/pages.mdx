@@ -1,0 +1,468 @@
+---
+title: Pages
+description: Astro file-based routing and the index.astro homepage structure
+---
+
+# Pages
+
+Astro uses file-based routing where each `.astro`, `.md`, or `.mdx` file in the `src/pages/` directory automatically becomes a route on your site.
+
+## File-Based Routing
+
+### How It Works
+
+The file path determines the URL:
+
+| File Path | URL Route |
+|-----------|----------|
+| `src/pages/index.astro` | `/` |
+| `src/pages/about.astro` | `/about` |
+| `src/pages/blog/post.astro` | `/blog/post` |
+| `src/pages/species/[id].astro` | `/species/:id` (dynamic) |
+
+<Info>
+Currently, ZOODOM has only one page: `index.astro` which serves as the homepage at `/`.
+</Info>
+
+### Route Generation
+
+Astro automatically:
+- Discovers all files in `src/pages/`
+- Creates routes based on file names
+- Pre-renders pages at build time (by default)
+- Generates static HTML files in `dist/`
+
+## index.astro - Homepage
+
+The homepage is the main entry point for the ZOODOM website.
+
+**Location:** `src/pages/index.astro`  
+**Route:** `/`  
+**Lines:** 96
+
+### Page Structure
+
+The page is organized into distinct sections:
+
+1. **Imports** (frontmatter)
+2. **Navigation** (navbar)
+3. **Header** (hero section)
+4. **Content sections** (animals, future content)
+
+### Frontmatter Imports
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import logo from'../assets/logo.svg';
+import HeroImg from '../assets/hero.png';
+---
+```
+
+Source: `src/pages/index.astro:1-5`
+
+**What's imported:**
+- `Layout` - The main layout wrapper with Bootstrap
+- `logo` - SVG logo as an optimized asset object
+- `HeroImg` - Hero section PNG image
+
+<Note>
+Assets imported in the frontmatter are processed by Astro's build system. Astro returns an object with a `src` property containing the optimized image path.
+</Note>
+
+### Layout Wrapper
+
+```astro
+<Layout>
+	<main>
+		<!-- All page content -->
+	</main>
+</Layout>
+```
+
+Source: `src/pages/index.astro:7-94`
+
+The entire page is wrapped in the `<Layout>` component and contained within a `<main>` element for semantic HTML.
+
+## Navigation Section
+
+### Responsive Navbar
+
+```astro
+<nav class="navbar navbar-expand-lg navbar-light">
+	<section class="container px-3 px-lg-5 py-3">
+		<a class="navbar-brand me-0" href="#">
+			<!-- Mobile logo -->
+			<img
+				src={logo.src}
+				class="img-fluid d-inline d-sm-none"
+				width="80"
+				alt="Logo"
+			/>
+			<!-- Tablet/Desktop logo -->
+			<img
+				src={logo.src}
+				class="img-fluid d-none d-sm-inline"
+				width="110"
+				alt="Logo"
+			/>
+		</a>
+		<!-- ... -->
+	</section>
+</nav>
+```
+
+Source: `src/pages/index.astro:9-26`
+
+**Responsive logo sizes:**
+- **Mobile** (`d-inline d-sm-none`): 80px width
+- **Tablet/Desktop** (`d-none d-sm-inline`): 110px width
+
+### Navbar Toggle
+
+```astro
+<button
+	class="navbar-toggler border-0"
+	type="button"
+	data-bs-toggle="collapse"
+	data-bs-target="#mainNavbar"
+	aria-controls="mainNavbar"
+	aria-expanded="false"
+	aria-label="Toggle navigation"
+>
+	<span class="navbar-toggler-icon"></span>
+</button>
+```
+
+Source: `src/pages/index.astro:28-38`
+
+The hamburger menu uses Bootstrap's collapse JavaScript for mobile navigation.
+
+### Navigation Links
+
+```astro
+<section class="collapse navbar-collapse" id="mainNavbar">
+	<ul class="navbar-nav ms-lg-auto mb-2 mb-lg-0 gap-lg-4 pt-3 pt-lg-0">
+		<li class="nav-item"><a class="nav-link active" aria-current="page" href="#">Inicio</a></li>
+		<li class="nav-item"><a class="nav-link" href="#">Especies</a></li>
+		<li class="nav-item"><a class="nav-link" href="#">Galeria</a></li>
+		<li class="nav-item"><a class="nav-link" href="#">Blog</a></li>
+		<li class="nav-item"><a class="nav-link" href="#">Contacto</a></li>
+	</ul>
+</section>
+```
+
+Source: `src/pages/index.astro:40-48`
+
+**Navigation items:**
+- Inicio (Home) - marked as active
+- Especies (Species)
+- Galeria (Gallery)
+- Blog
+- Contacto (Contact)
+
+<Warning>
+All navigation links currently point to `#`. These should be updated to actual routes as pages are created.
+</Warning>
+
+## Header Section (Hero)
+
+### Hero Layout
+
+```astro
+<header class="position-relative py-md-5 py-lg-5">
+	<section class="container px-3 px-lg-5 pb-5 py-lg-5 my-5">
+		<section class="row d-flex justify-content-between align-items-center">
+			<!-- Text column -->
+			<section class="col-lg-6 col-md-6 col-12">
+				<!-- Content -->
+			</section>
+			<!-- Image column -->
+			<section class="col-lg-6 col-md-6 col-12 d-none d-md-block">
+				<!-- Image -->
+			</section>
+		</section>
+	</section>
+</header>
+```
+
+Source: `src/pages/index.astro:51-63`
+
+**Layout features:**
+- Two-column grid on tablet/desktop
+- Full-width on mobile
+- Image hidden on mobile (`d-none d-md-block`)
+
+### Hero Text Content
+
+```astro
+<section class="col-lg-6 col-md-6 col-12">
+	<h1 class="display-1 fw-bold">Bienvenido a nuestro zoológico</h1>
+	<p>Planea una salida en familia a nuestro parque zoológico nacional para que te sectioniertas en una esperiencia innovidable.</p>
+	<button class="btn btn-brand px-5 py-2 rounded-pill">Reservar ahora</button>
+</section>
+```
+
+Source: `src/pages/index.astro:54-58`
+
+**Content breakdown:**
+- `h1` with `display-1` - Large, bold headline
+- `p` - Descriptive text about family visits
+- `button` with custom `btn-brand` class - Call-to-action
+
+<Note>
+The text contains typos: "sectioniertas" should be "conviertas" and "esperiencia innovidable" should be "experiencia inolvidable".
+</Note>
+
+### Hero Image
+
+```astro
+<section class="col-lg-6 col-md-6 col-12 d-none d-md-block">
+	<img src={HeroImg.src} class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5" alt="Hero Image">
+</section>
+```
+
+Source: `src/pages/index.astro:59-61`
+
+**Image implementation:**
+- Uses imported `HeroImg.src` for optimized path
+- `position-absolute` for custom positioning
+- `bottom-0 end-0` - Anchored to bottom right
+- `hero-img` class for custom styling (max-width: 600px)
+
+## Content Sections
+
+### Animals Section
+
+```astro
+<section id="animals" class="py-5">
+	<section class="container">
+		<br><br><br><br><br><br>
+		<br><br><br><br><br><br>
+		<br><br><br><br><br><br>
+		<br><br><br><br><br><br>
+	</section>
+</section>
+```
+
+Source: `src/pages/index.astro:65-72`
+
+This section is a placeholder with an ID anchor and spacing. The background uses a texture image defined in `global.css`:
+
+```css
+#animals {
+    background-image: url('./texture-img.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
+}
+```
+
+Source: `src/assets/global.css:108-114`
+
+### Additional Placeholder Content
+
+The page includes significant vertical spacing at the end:
+
+```astro
+<br><br><br><br><br><br>
+<!-- Repeated many times -->
+```
+
+Source: `src/pages/index.astro:73-92`
+
+<Info>
+This placeholder spacing suggests future content sections are planned but not yet implemented.
+</Info>
+
+## Image Asset Usage
+
+### Logo Import Pattern
+
+```astro
+---
+import logo from'../assets/logo.svg';
+---
+
+<img src={logo.src} />
+```
+
+Astro processes the SVG and returns an object. Access the path via `.src` property.
+
+### PNG Image Import Pattern
+
+```astro
+---
+import HeroImg from '../assets/hero.png';
+---
+
+<img src={HeroImg.src} />
+```
+
+Same pattern for raster images - Astro optimizes them at build time.
+
+<Tip>
+Always use the `.src` property when referencing imported images in `<img>` tags or CSS.
+</Tip>
+
+## Bootstrap Classes Used
+
+The page extensively uses Bootstrap utilities:
+
+### Spacing
+- `px-3`, `px-lg-5` - Responsive horizontal padding
+- `py-3`, `py-5`, `py-lg-5` - Responsive vertical padding
+- `mb-2`, `mb-lg-0` - Responsive bottom margin
+- `my-5` - Vertical margin
+- `gap-lg-4` - Gap between flex items
+
+### Grid
+- `container` - Centered responsive container
+- `row` - Flexbox row
+- `col-12`, `col-md-6`, `col-lg-6` - Responsive columns
+
+### Display
+- `d-inline`, `d-none`, `d-sm-none`, `d-sm-inline`, `d-md-block` - Responsive display
+- `d-flex` - Flexbox container
+
+### Positioning
+- `position-relative`, `position-absolute` - CSS positioning
+- `bottom-0`, `end-0` - Absolute positioning anchors
+
+### Flexbox
+- `justify-content-between` - Space between items
+- `align-items-center` - Vertical center alignment
+- `ms-lg-auto` - Margin start auto (push right)
+
+### Typography
+- `display-1` - Large display heading
+- `fw-bold` - Bold font weight
+
+### Components
+- `navbar`, `navbar-expand-lg`, `navbar-light` - Navbar styles
+- `navbar-brand`, `navbar-toggler`, `navbar-collapse` - Navbar components
+- `nav-item`, `nav-link` - Navigation items
+- `btn`, `btn-brand` - Button styles
+- `rounded-pill` - Pill-shaped button
+
+### Utilities
+- `img-fluid` - Responsive images
+- `border-0` - Remove border
+
+## Custom CSS Classes
+
+The page uses custom classes defined in `global.css`:
+
+- `.btn-brand` - Custom brand-colored button
+- `.hero-img` - Hero image sizing
+- `.active` - Active navigation link styling
+
+See [Assets](/structure/assets) for CSS documentation.
+
+## Page Performance
+
+### Static Generation
+
+By default, Astro pre-renders this page at build time:
+
+1. Runs the frontmatter code
+2. Imports and optimizes assets
+3. Renders the HTML template
+4. Generates static `index.html` in `dist/`
+
+### Asset Optimization
+
+Imported images are automatically:
+- Optimized for web
+- Given cache-friendly filenames
+- Served from the build output
+
+### JavaScript
+
+The only JavaScript on the page comes from Bootstrap CDN (loaded in Layout.astro):
+- Popper.js for tooltips/dropdowns
+- Bootstrap.js for interactive components
+- Bootstrap bundle
+
+## Creating Additional Pages
+
+To add more pages to ZOODOM:
+
+### 1. Create a new .astro file
+
+```bash
+touch src/pages/especies.astro
+```
+
+### 2. Use the same layout pattern
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main>
+		<h1>Nuestras Especies</h1>
+		<!-- Content -->
+	</main>
+</Layout>
+```
+
+### 3. Update navigation links
+
+In `index.astro`, update the href:
+
+```astro
+<a class="nav-link" href="/especies">Especies</a>
+```
+
+### 4. Build and deploy
+
+The new page will automatically be generated at build time.
+
+## Dynamic Routes
+
+For dynamic pages (e.g., individual species pages), use bracket notation:
+
+**File:** `src/pages/especies/[id].astro`  
+**Routes:** `/especies/leon`, `/especies/tigre`, etc.
+
+```astro
+---
+export function getStaticPaths() {
+  return [
+    { params: { id: 'leon' } },
+    { params: { id: 'tigre' } },
+    { params: { id: 'elefante' } },
+  ];
+}
+
+const { id } = Astro.params;
+---
+
+<Layout>
+	<h1>Especie: {id}</h1>
+</Layout>
+```
+
+<Info>
+Dynamic routes require `getStaticPaths()` to tell Astro which pages to generate at build time.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Layouts" icon="layer-group" href="/structure/layouts">
+    Learn about the Layout component used by pages
+  </Card>
+  
+  <Card title="Assets" icon="image" href="/structure/assets">
+    See how to import and optimize images
+  </Card>
+  
+  <Card title="Components" icon="puzzle-piece" href="/structure/components">
+    Understand the Head component for SEO
+  </Card>
+</CardGroup>

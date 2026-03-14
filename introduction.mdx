@@ -1,0 +1,110 @@
+---
+title: Introduction
+description: An overview of ZOODOM, an Astro-based website for the national zoo of the Dominican Republic
+---
+
+# Introduction to ZOODOM
+
+ZOODOM is a modern, production-ready website built with Astro for the Dominican Republic's national zoo (Parque Zoológico Nacional). The project is designed to improve usability, accessibility, and organic visibility while providing an engaging digital experience for visitors.
+
+## What is ZOODOM?
+
+ZOODOM is a static site generator-based web application that serves as the digital presence for a national zoo. The website features:
+
+- **Species Catalog**: Detailed information cards for different animal species
+- **Event Calendar**: Schedule of zoo events and activities
+- **Visit Planning**: Tools and information to help visitors plan their zoo experience
+- **Educational Blog**: Content focused on wildlife education and conservation
+- **Multimedia Resources**: Rich media integration for an immersive experience
+- **Multilingual Support**: Spanish language interface (locale: es_DO)
+
+## Tech Stack
+
+ZOODOM is built with a modern, performance-focused technology stack:
+
+### Core Framework
+- **Astro 6.0.4**: The primary framework leveraging islands architecture for optimal performance
+- **Node.js**: Requires version >=22.12.0 (defined in package.json:6)
+
+### UI Framework & Styling
+- **Bootstrap 5.3.8**: Responsive UI components and grid system (src/layouts/Layout.astro:10)
+- **Custom Design System**: Comprehensive color palette with brand greens, accent colors, and extended palette
+- **Google Fonts**: Onest font family with variable weights (100-900)
+
+### Design System Colors
+
+The project includes a sophisticated color system defined in src/assets/global.css:1-58:
+
+```css
+/* Brand Green */
+--color-brand-green-800: #246C32;
+--color-brand-green-700: #388E49;
+--color-brand-green-600: #51B063;
+
+/* Accent Green */
+--color-accent-green-500: #82C45A;
+--color-accent-green-400: #9AE16F;
+
+/* Extended Palette */
+--color-extended-blue-500: #6BD8FC;
+--color-extended-yellow-500: #FFB401;
+--color-extended-orange-500: #FE9900;
+--color-extended-red-500: #FF2414;
+```
+
+## Key Features
+
+### Responsive Navigation
+
+The navigation system adapts seamlessly across devices with a collapsible navbar for mobile and full navigation for desktop (src/pages/index.astro:9-50):
+
+- Inicio (Home)
+- Especies (Species)
+- Galeria (Gallery)
+- Blog
+- Contacto (Contact)
+
+### SEO Optimization
+
+Comprehensive SEO meta tags are implemented in src/components/Head.astro:
+
+- Open Graph protocol support
+- Twitter card integration
+- Canonical URLs
+- Structured metadata
+- Social media preview images (1200x630)
+
+### Production Deployment
+
+The site is configured for deployment at `https://zoodomi.netlify.app` (astro.config.mjs:6) with static site generation for optimal performance.
+
+## Project Purpose
+
+From the repository description (README.md):
+
+> "Diseñar y desarrollar un sitio en producción con Astro + HTML/CSS/JS + Bootstrap que mejore usabilidad, accesibilidad y visibilidad orgánica, e integre Fichas de especies y Calendario de eventos como secciones prioritarias."
+
+The project aims to:
+
+1. **Enhance Usability**: Create an intuitive interface for zoo visitors
+2. **Improve Accessibility**: Follow web accessibility standards
+3. **Boost Organic Visibility**: Implement SEO best practices
+4. **Integrate Key Sections**: Prioritize species cards and event calendar
+5. **Provide Educational Value**: Offer blog content and multimedia resources
+
+## Why Astro?
+
+Astro is the perfect choice for ZOODOM because:
+
+- **Zero JavaScript by Default**: Faster page loads and better performance
+- **Component Islands**: Interactive elements only where needed
+- **Static Site Generation**: Optimal for content-heavy sites like zoo information
+- **Framework Agnostic**: Easy to integrate various UI libraries
+- **Built-in Optimization**: Automatic image optimization and asset handling
+
+## Next Steps
+
+Ready to get started? Check out:
+
+- [Installation](/installation) - Set up your development environment
+- [Quick Start](/quickstart) - Get the site running in under 5 minutes

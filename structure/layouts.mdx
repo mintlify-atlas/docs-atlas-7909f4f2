@@ -1,0 +1,275 @@
+---
+title: Layouts
+description: Documentation for Layout.astro and the Bootstrap CDN integration pattern
+---
+
+# Layouts
+
+Layouts in Astro are component templates that wrap page content, providing a consistent structure across the site. ZOODOM uses a single main layout that integrates Bootstrap 5 via CDN.
+
+## Layout.astro
+
+The main layout component is located at `src/layouts/Layout.astro` and provides the HTML document structure with Bootstrap integration.
+
+### Full Implementation
+
+```astro
+---
+import Head from "../components/Head.astro";
+---
+
+<!doctype html>
+<html lang="es">
+	<head>
+		<Head />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+			crossorigin="anonymous"
+		/>
+	</head>
+	<body>
+		<slot />
+		<script
+			src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+			integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+			crossorigin="anonymous"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+			integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+			crossorigin="anonymous"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+			crossorigin="anonymous"></script>
+	</body>
+</html>
+```
+
+<Info>
+Source: `src/layouts/Layout.astro:1-32`
+</Info>
+
+## Key Features
+
+### Spanish Language
+
+The layout sets `lang="es"` for Spanish content:
+
+```astro
+<html lang="es">
+```
+
+### Head Component Integration
+
+The layout imports and renders the `Head.astro` component which handles all meta tags, SEO, and Open Graph data:
+
+```astro
+---
+import Head from "../components/Head.astro";
+---
+
+<head>
+	<Head />
+	<!-- Bootstrap CSS -->
+</head>
+```
+
+See [Components](/structure/components) for details on the Head component props.
+
+### Bootstrap CDN Integration
+
+The layout uses Bootstrap 5.3.8 via jsDelivr CDN with subresource integrity (SRI) hashes.
+
+#### CSS Loading
+
+Bootstrap CSS is loaded in the `<head>` for optimal rendering:
+
+```html
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+	crossorigin="anonymous"
+/>
+```
+
+**Key attributes:**
+- `integrity` - SRI hash ensures the file hasn't been tampered with
+- `crossorigin="anonymous"` - Required for CORS with integrity checking
+
+#### JavaScript Loading
+
+Bootstrap JavaScript is loaded at the end of `<body>` for better page load performance:
+
+```html
+<!-- Popper.js - Required for Bootstrap dropdowns and tooltips -->
+<script
+	src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+	integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+	crossorigin="anonymous"></script>
+
+<!-- Bootstrap core JavaScript -->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
+	integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
+	crossorigin="anonymous"></script>
+
+<!-- Bootstrap bundle (includes Popper) -->
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+	crossorigin="anonymous"></script>
+```
+
+<Note>
+The layout loads three JavaScript files: Popper.js separately, Bootstrap core, and Bootstrap bundle. In a production optimization, you could load only `bootstrap.bundle.min.js` which includes Popper.
+</Note>
+
+## Slot Pattern
+
+Astro's `<slot />` element is where page content gets injected:
+
+```astro
+<body>
+	<slot />
+	<!-- Scripts -->
+</body>
+```
+
+When a page uses the layout:
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main>
+		<!-- This content goes into the <slot /> -->
+		<h1>Page content</h1>
+	</main>
+</Layout>
+```
+
+### How Slots Work
+
+1. Page imports the Layout component
+2. Page wraps its content in `<Layout>` tags
+3. Astro renders the layout and injects the page content where `<slot />` appears
+4. Result is a complete HTML document
+
+<CodeGroup>
+
+```astro Page (index.astro)
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout>
+	<main>
+		<nav>Navigation</nav>
+		<header>Header content</header>
+	</main>
+</Layout>
+```
+
+```html Rendered Output
+<!doctype html>
+<html lang="es">
+	<head>
+		<!-- Head component output -->
+		<!-- Bootstrap CSS -->
+	</head>
+	<body>
+		<!-- Page content injected here -->
+		<main>
+			<nav>Navigation</nav>
+			<header>Header content</header>
+		</main>
+		<!-- Bootstrap scripts -->
+	</body>
+</html>
+```
+
+</CodeGroup>
+
+## Usage Example
+
+Every page in ZOODOM uses this layout pattern:
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import logo from '../assets/logo.svg';
+---
+
+<Layout>
+	<main>
+		<nav class="navbar navbar-expand-lg navbar-light">
+			<!-- Bootstrap navbar components -->
+		</nav>
+		<header class="position-relative py-md-5">
+			<!-- Bootstrap grid and utilities -->
+		</header>
+	</main>
+</Layout>
+```
+
+Source: `src/pages/index.astro:1-8`
+
+## Benefits of This Pattern
+
+<CardGroup cols={2}>
+  <Card title="Consistency" icon="check">
+    All pages automatically get the same Bootstrap integration and HTML structure
+  </Card>
+  
+  <Card title="Maintainability" icon="wrench">
+    Update Bootstrap version or add global scripts in one place
+  </Card>
+  
+  <Card title="Performance" icon="bolt">
+    Scripts load at the end of body for optimal page load timing
+  </Card>
+  
+  <Card title="Security" icon="shield">
+    SRI integrity hashes ensure CDN files haven't been modified
+  </Card>
+</CardGroup>
+
+## Bootstrap Utilities Available
+
+With Bootstrap 5.3.8 loaded, all pages have access to:
+
+- **Grid system** - Responsive 12-column layout
+- **Components** - Navbar, buttons, cards, modals, etc.
+- **Utilities** - Spacing, colors, display, position classes
+- **JavaScript** - Interactive components like collapse, dropdown, modal
+
+Example from the homepage:
+
+```astro
+<section class="container px-3 px-lg-5 py-3">
+	<section class="row d-flex justify-content-between align-items-center">
+		<section class="col-lg-6 col-md-6 col-12">
+			<!-- Content -->
+		</section>
+	</section>
+</section>
+```
+
+Source: `src/pages/index.astro:52-59`
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Head Component" icon="code" href="/structure/components">
+    Learn about the Head.astro props and SEO configuration
+  </Card>
+  
+  <Card title="Pages" icon="file" href="/structure/pages">
+    See how index.astro uses this layout
+  </Card>
+</CardGroup>

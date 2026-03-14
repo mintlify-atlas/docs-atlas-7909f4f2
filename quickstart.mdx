@@ -1,80 +1,297 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Get ZOODOM running on your local machine in under 5 minutes
 ---
 
-## Get started in three steps
+# Quick Start
 
-Get your documentation site running locally and make your first customization.
+Get the ZOODOM website up and running on your local development environment in under 5 minutes.
 
-### Step 1: Set up your local environment
+## Prerequisites
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+Before starting, ensure you have:
 
-### Step 2: Deploy your changes
+- Node.js >= 22.12.0 installed
+- Completed the [Installation](/installation) steps
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+## Development Workflow
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+<Steps>
+  <Step title="Clone and Install">
+    If you haven't already, clone the repository and install dependencies:
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+    ```bash
+    git clone <repository-url>
+    cd zoodom
+    npm install
+    ```
+  </Step>
 
-### Step 3: Go live
+  <Step title="Start the Development Server">
+    Launch the Astro development server using the npm script defined in package.json:9:
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+    <CodeGroup>
+      ```bash npm
+      npm run dev
+      ```
 
-## Next steps
+      ```bash yarn
+      yarn dev
+      ```
 
-Now that you have your docs running, explore these key features:
+      ```bash pnpm
+      pnpm dev
+      ```
+    </CodeGroup>
 
-<CardGroup cols={2}>
+    This runs the `astro dev` command which starts a local development server.
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+    You should see output similar to:
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+    ```bash
+    astro v6.0.4 ready in 350 ms
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+    ┃ Local    http://localhost:4321/
+    ┃ Network  use --host to expose
+    ```
+  </Step>
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+  <Step title="Open in Browser">
+    Navigate to `http://localhost:4321/` in your web browser.
 
-</CardGroup>
+    You'll see the ZOODOM homepage with:
+
+    - **Responsive Navigation Bar**: Logo with navigation links (Inicio, Especies, Galeria, Blog, Contacto)
+    - **Hero Section**: Large heading "Bienvenido a nuestro zoológico" (src/pages/index.astro:55)
+    - **Call-to-Action Button**: "Reservar ahora" button styled with brand green (src/pages/index.astro:57)
+    - **Hero Image**: Positioned on the right side on tablet/desktop (hidden on mobile)
+  </Step>
+
+  <Step title="Start Developing">
+    The development server features hot module replacement (HMR). Any changes you make to files will automatically reload in the browser.
+
+    Try editing `src/pages/index.astro` to see live updates!
+  </Step>
+</Steps>
+
+## Available Scripts
+
+ZOODOM includes the following npm scripts defined in package.json:8-13:
+
+### Development
+
+```bash
+npm run dev
+```
+
+Starts the Astro development server at `http://localhost:4321` with hot module replacement.
+
+### Build for Production
+
+```bash
+npm run build
+```
+
+Builds the site for production to the `./dist/` directory. This command:
+- Compiles all `.astro` files to static HTML
+- Optimizes assets and images
+- Generates the production-ready site
+
+### Preview Production Build
+
+```bash
+npm run preview
+```
+
+Serves the production build locally for testing before deployment. Run this after `npm run build` to verify the production site works correctly.
+
+### Astro CLI
+
+```bash
+npm run astro
+```
+
+Directly access Astro CLI commands. Examples:
+
+```bash
+npm run astro add <integration>  # Add integrations
+npm run astro check              # Type-check your project
+npm run astro -- --help          # Get help
+```
+
+## Understanding the Homepage
+
+The main page (src/pages/index.astro) demonstrates key Astro concepts:
+
+### Component Structure
+
+```astro
+---
+import Layout from '../layouts/Layout.astro';
+import logo from'../assets/logo.svg';
+import HeroImg from '../assets/hero.png';
+---
+
+<Layout>
+  <main>
+    <!-- Content here -->
+  </main>
+</Layout>
+```
+
+The frontmatter (lines 1-5) imports dependencies, while the template below uses them.
+
+### Navigation Component
+
+The navbar (src/pages/index.astro:9-50) uses Bootstrap's responsive navbar:
+
+```astro
+<nav class="navbar navbar-expand-lg navbar-light">
+  <section class="container px-3 px-lg-5 py-3">
+    <a class="navbar-brand me-0" href="#">
+      <img src={logo.src} class="img-fluid d-inline d-sm-none" width="80" alt="Logo" />
+      <img src={logo.src} class="img-fluid d-none d-sm-inline" width="110" alt="Logo" />
+    </a>
+    <!-- Mobile toggle button -->
+    <button class="navbar-toggler border-0" type="button" 
+            data-bs-toggle="collapse" 
+            data-bs-target="#mainNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </section>
+</nav>
+```
+
+### Hero Section
+
+The hero section (src/pages/index.astro:51-64) showcases the bilingual content:
+
+```astro
+<header class="position-relative py-md-5 py-lg-5">
+  <section class="container px-3 px-lg-5 pb-5 py-lg-5 my-5">
+    <section class="row d-flex justify-content-between align-items-center">
+      <section class="col-lg-6 col-md-6 col-12">
+        <h1 class="display-1 fw-bold">Bienvenido a nuestro zoológico</h1>
+        <p>Planea una salida en familia a nuestro parque zoológico nacional 
+           para que te sectioniertas en una esperiencia innovidable.</p>
+        <button class="btn btn-brand px-5 py-2 rounded-pill">Reservar ahora</button>
+      </section>
+      <section class="col-lg-6 col-md-6 col-12 d-none d-md-block">
+        <img src={HeroImg.src} class="img-fluid hero-img position-absolute bottom-0 end-0 pe-5" 
+             alt="Hero Image">
+      </section>
+    </section>
+  </section>
+</header>
+```
+
+**Key Features:**
+- Spanish language content (locale: es_DO from src/components/Head.astro:37)
+- Responsive grid layout (Bootstrap columns)
+- Custom button styling using design system colors
+- Conditional image rendering (hidden on mobile)
+
+## Styling and Design System
+
+The custom design system is defined in src/assets/global.css and imported in src/components/Head.astro:2.
+
+### Brand Colors
+
+Example usage from src/assets/global.css:88-100:
+
+```css
+.btn-brand {
+    background-color: var(--color-brand-green-800);  /* #246C32 */
+    color: var(--color-neutral-white-900);
+    border: none;
+}
+.btn-brand:hover {
+    background-color: var(--color-brand-green-700);  /* #388E49 */
+    color: var(--color-neutral-white-900);
+}
+.btn-brand:active {
+    background-color: var(--color-brand-green-600);  /* #51B063 */
+    color: var(--color-neutral-white-900);
+}
+```
+
+### Typography
+
+The site uses the Onest font family (src/assets/global.css:65):
+
+```css
+html, body {
+    font-family: 'Onest', sans-serif;
+    background-color: var(--color-neutral-white-900);
+    color: var(--color-neutral-black-900);
+}
+```
+
+Headings and paragraphs have custom sizing (src/assets/global.css:77-87):
+
+```css
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--color-neutral-black-900);
+}
+p {
+    font-size: 18px;
+    color: var(--color-neutral-gray-900);
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+```
+
+## Production Deployment
+
+The site is configured for deployment at **https://zoodomi.netlify.app** (astro.config.mjs:6).
+
+<Steps>
+  <Step title="Build the Site">
+    ```bash
+    npm run build
+    ```
+
+    This generates static HTML in the `./dist/` directory.
+  </Step>
+
+  <Step title="Test Production Build">
+    ```bash
+    npm run preview
+    ```
+
+    Verify everything works as expected before deploying.
+  </Step>
+
+  <Step title="Deploy to Netlify">
+    The `dist/` folder can be deployed to Netlify or any static hosting provider.
+
+    The site URL is configured in `astro.config.mjs` for proper canonical URLs and sitemap generation.
+  </Step>
+</Steps>
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  The production site uses the canonical URL `https://zoodomi.netlify.app` which is referenced in Open Graph tags (src/components/Head.astro:13,39) for proper social media sharing.
 </Note>
+
+## SEO Features
+
+The site includes comprehensive SEO optimization in src/components/Head.astro:
+
+- **Meta Description**: "ZOODOM - Parque Zoológico Nacional. Descubre la fauna y flora en nuestro zoológico." (line 12)
+- **Keywords**: zoo, zoológico, animales, naturaleza, parque, rd (line 24)
+- **Author**: Ronald Santana (line 25)
+- **Open Graph Protocol**: Full OG meta tags for social sharing (lines 35-46)
+- **Canonical URLs**: Proper canonical link tags (line 31)
+- **Locale**: es_DO (Dominican Spanish) (line 37)
+
+## Next Steps
+
+Now that you have ZOODOM running:
+
+1. Explore the component structure in `src/components/`
+2. Customize the design system in `src/assets/global.css`
+3. Add new pages by creating `.astro` files in `src/pages/`
+4. Implement the species catalog and event calendar sections
+5. Review SEO settings in `src/components/Head.astro`

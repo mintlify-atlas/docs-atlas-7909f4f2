@@ -1,0 +1,631 @@
+---
+title: Educational Blog
+description: Learn how to implement an educational blog to share conservation stories, animal updates, and zoo news
+---
+
+# Educational Blog
+
+The educational blog is a content platform for sharing conservation stories, animal updates, behind-the-scenes insights, and educational content that extends the zoo's mission beyond physical visits. It serves as a dynamic communication channel and educational resource.
+
+## Purpose
+
+The blog serves multiple strategic objectives:
+
+- **Education**: Teach visitors about wildlife conservation, animal behavior, and environmental issues
+- **Engagement**: Build an ongoing relationship with visitors between zoo visits
+- **SEO**: Generate fresh, keyword-rich content that improves search visibility
+- **Authority**: Establish the zoo as a trusted source for wildlife information
+- **Storytelling**: Share compelling narratives about animals, keepers, and conservation efforts
+- **Community**: Create opportunities for visitor interaction and social sharing
+
+## Content Categories
+
+Organize blog posts into clear categories:
+
+- **Animal Spotlights**: In-depth features on specific species
+- **Conservation News**: Updates on preservation programs and success stories
+- **Behind the Scenes**: Keeper diaries, veterinary care, enrichment activities
+- **Educational Articles**: Wildlife facts, habitat information, ecosystem education
+- **Zoo News**: New exhibits, births, events, and announcements
+- **Seasonal Content**: Holiday themes, weather-related animal behavior
+
+## Implementation Guide
+
+<Steps>
+
+<Step title="Create Blog Content Collection">
+
+Set up an Astro Content Collection for blog posts. Add to `src/content/config.ts`:
+
+```typescript
+import { defineCollection, z } from 'astro:content';
+
+const blogCollection = defineCollection({
+  type: 'content',
+  schema: ({ image }) => z.object({
+    title: z.string(),
+    description: z.string(),
+    author: z.string(),
+    authorRole: z.string().optional(),
+    publishDate: z.date(),
+    updateDate: z.date().optional(),
+    category: z.enum([
+      'animal-spotlight',
+      'conservation',
+      'behind-the-scenes',
+      'education',
+      'zoo-news',
+      'seasonal',
+    ]),
+    tags: z.array(z.string()).optional(),
+    featuredImage: image(),
+    featuredImageAlt: z.string(),
+    featured: z.boolean().default(false),
+    readingTime: z.string().optional(), // e.g., "5 min"
+  }),
+});
+
+export const collections = {
+  'blog': blogCollection,
+  // ... other collections
+};
+```
+
+</Step>
+
+<Step title="Create Blog Post Files">
+
+Create individual blog posts in `src/content/blog/`. Example: `src/content/blog/bienvenida-cria-jirafa.mdx`:
+
+```mdx
+---
+title: ¡Bienvenida Nueva Cría de Jirafa!
+author: Dr. María González
+authorRole: Veterinaria Principal
+publishDate: 2026-03-10
+category: zoo-news
+tags: [jirafas, nacimientos, conservación]
+featuredImage: ./images/baby-giraffe.jpg
+featuredImageAlt: Cría de jirafa junto a su madre en el hábitat del zoológico
+featured: true
+readingTime: 4 min
+description: Celebramos el nacimiento de una hermosa cría de jirafa, un evento importante para la conservación de esta especie vulnerable.
+---
+
+¡Tenemos noticias emocionantes! El zoológico ha dado la bienvenida a una nueva integrante de la familia: una cría de jirafa que nació el pasado 5 de marzo.
+
+## Un Nacimiento Especial
+
+La pequeña jirafa, que aún no tiene nombre oficial (¡estamos aceptando sugerencias de la comunidad!), nació después de un período de gestación de 15 meses. Pesó aproximadamente 70 kg al nacer y medía ya 1.8 metros de altura.
+
+La madre, **Zara**, de 8 años, tuvo un parto sin complicaciones bajo la atenta supervisión de nuestro equipo veterinario. En las primeras 24 horas, la cría ya estaba de pie y amamantándose, señales excelentes de buena salud.
+
+## Importancia para la Conservación
+
+Las jirafas están clasificadas como "Vulnerables" en la Lista Roja de la UICN, con poblaciones silvestres que han disminuido casi un 40% en las últimas tres décadas. Cada nacimiento en programas de reproducción responsable representa un paso importante para la preservación de la especie.
+
+> "Este nacimiento es un testimonio del compromiso de nuestro equipo con la conservación y el bienestar animal. Estamos encantados de compartir esta alegría con nuestra comunidad." - Dra. María González
+
+## Los Primeros Días
+
+Durante las primeras semanas, la cría permanecerá cerca de su madre en un área designada del hábitat. Los visitantes podrán observarlas, aunque mantendremos zonas de privacidad para garantizar el descanso y la vinculación madre-cría.
+
+Nuestro equipo de cuidadores monitorea constantemente:
+
+- Patrones de alimentación
+- Desarrollo físico y motor
+- Interacción con la madre
+- Signos vitales y salud general
+
+## Visita a la Nueva Cría
+
+Los horarios recomendados para ver a la madre y su cría son:
+
+- **Mañanas (9:00 AM - 11:00 AM)**: Momento más activo
+- **Tardes (3:00 PM - 4:30 PM)**: Interacciones sociales
+
+Recuerda mantener un volumen de voz bajo cerca del hábitat para no estresar a los animales.
+
+## Ayuda a Nombrar a la Cría
+
+¡Queremos que nuestra comunidad participe! Envía tus sugerencias de nombres a través de nuestras redes sociales con el hashtag #NombraLaJirafa. El equipo seleccionará los finalistas y abriremos una votación pública.
+
+---
+
+*Fotos y actualizaciones regulares estarán disponibles en nuestro Instagram [@ZoodomRD](https://instagram.com/zoodom)*
+```
+
+</Step>
+
+<Step title="Create Blog Index Page">
+
+Create `src/pages/blog/index.astro` to list all blog posts:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => 
+  b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
+
+const featuredPosts = sortedPosts.filter(post => post.data.featured).slice(0, 3);
+const recentPosts = sortedPosts.slice(0, 9);
+
+const categoryLabels = {
+  'animal-spotlight': 'Animales Destacados',
+  'conservation': 'Conservación',
+  'behind-the-scenes': 'Detrás de Escena',
+  'education': 'Educación',
+  'zoo-news': 'Noticias del Zoo',
+  'seasonal': 'Contenido de Temporada',
+};
+
+function formatDate(date: Date) {
+  return new Intl.DateTimeFormat('es-ES', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }).format(date);
+}
+---
+
+<Layout title="Blog Educativo">
+  <main>
+    <!-- Hero Section -->
+    <section class="bg-light py-5">
+      <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-3">Blog Educativo</h1>
+        <p class="lead">
+          Historias, noticias y conocimientos sobre vida silvestre y conservación
+        </p>
+      </div>
+    </section>
+
+    <div class="container py-5">
+      <!-- Featured Posts -->
+      {featuredPosts.length > 0 && (
+        <section class="mb-5">
+          <h2 class="h3 mb-4">Destacados</h2>
+          <div class="row g-4">
+            {featuredPosts.map((post) => (
+              <div class="col-lg-4">
+                <article class="card h-100 shadow-sm hover-lift">
+                  <img 
+                    src={post.data.featuredImage.src} 
+                    alt={post.data.featuredImageAlt}
+                    class="card-img-top"
+                    style="height: 250px; object-fit: cover;"
+                  />
+                  <div class="card-body">
+                    <span class="badge bg-primary mb-2">
+                      {categoryLabels[post.data.category]}
+                    </span>
+                    <h3 class="h5 card-title">
+                      <a href={`/blog/${post.slug}`} class="text-decoration-none text-dark">
+                        {post.data.title}
+                      </a>
+                    </h3>
+                    <p class="card-text text-muted small">{post.data.description}</p>
+                    <div class="d-flex justify-content-between align-items-center text-muted small">
+                      <span>{post.data.author}</span>
+                      <span>{formatDate(post.data.publishDate)}</span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <div class="row">
+        <!-- Blog Posts -->
+        <div class="col-lg-8">
+          <h2 class="h3 mb-4">Artículos Recientes</h2>
+          <div class="row g-4">
+            {recentPosts.map((post) => (
+              <div class="col-md-6">
+                <article class="card h-100">
+                  <img 
+                    src={post.data.featuredImage.src} 
+                    alt={post.data.featuredImageAlt}
+                    class="card-img-top"
+                    style="height: 200px; object-fit: cover;"
+                  />
+                  <div class="card-body">
+                    <span class="badge bg-secondary mb-2">
+                      {categoryLabels[post.data.category]}
+                    </span>
+                    <h3 class="h6 card-title">
+                      <a href={`/blog/${post.slug}`} class="text-decoration-none text-dark">
+                        {post.data.title}
+                      </a>
+                    </h3>
+                    <p class="card-text small text-muted">
+                      {post.data.description.slice(0, 100)}...
+                    </p>
+                    <div class="small text-muted">
+                      <div>{post.data.author}</div>
+                      <div>{formatDate(post.data.publishDate)}</div>
+                      {post.data.readingTime && (
+                        <div>⏱️ {post.data.readingTime}</div>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Categorías</h3>
+              <ul class="list-unstyled">
+                {Object.entries(categoryLabels).map(([key, label]) => (
+                  <li class="mb-2">
+                    <a href={`/blog/categoria/${key}`} class="text-decoration-none">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-body">
+              <h3 class="h5 mb-3">Suscríbete</h3>
+              <p class="small">Recibe las últimas noticias y artículos en tu correo</p>
+              <form>
+                <input 
+                  type="email" 
+                  class="form-control mb-2" 
+                  placeholder="tu@email.com"
+                  required
+                />
+                <button type="submit" class="btn btn-primary w-100">
+                  Suscribirse
+                </button>
+              </form>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .hover-lift {
+    transition: transform 0.2s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+  }
+</style>
+```
+
+</Step>
+
+<Step title="Create Individual Blog Post Pages">
+
+Create `src/pages/blog/[...slug].astro` for individual posts:
+
+```astro
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  const blogPosts = await getCollection('blog');
+  return blogPosts.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+const { data } = entry;
+
+const formattedDate = new Intl.DateTimeFormat('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}).format(data.publishDate);
+
+// Get related posts (same category)
+const allPosts = await getCollection('blog');
+const relatedPosts = allPosts
+  .filter(post => 
+    post.data.category === data.category && 
+    post.slug !== entry.slug
+  )
+  .slice(0, 3);
+---
+
+<Layout 
+  title={data.title}
+  description={data.description}
+>
+  <article class="blog-post">
+    <!-- Hero Image -->
+    <div class="position-relative">
+      <img 
+        src={data.featuredImage.src} 
+        alt={data.featuredImageAlt}
+        class="w-100"
+        style="max-height: 500px; object-fit: cover;"
+      />
+    </div>
+
+    <!-- Content -->
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <!-- Post Header -->
+          <header class="mb-4">
+            <h1 class="display-5 fw-bold mb-3">{data.title}</h1>
+            
+            <div class="d-flex align-items-center text-muted mb-3">
+              <div class="me-4">
+                <strong>{data.author}</strong>
+                {data.authorRole && (
+                  <div class="small">{data.authorRole}</div>
+                )}
+              </div>
+              <div class="me-4">
+                <small>{formattedDate}</small>
+              </div>
+              {data.readingTime && (
+                <div>
+                  <small>⏱️ {data.readingTime}</small>
+                </div>
+              )}
+            </div>
+
+            {data.tags && data.tags.length > 0 && (
+              <div class="mb-3">
+                {data.tags.map((tag) => (
+                  <span class="badge bg-light text-dark me-2">#{tag}</span>
+                ))}
+              </div>
+            )}
+          </header>
+
+          <!-- Post Content -->
+          <div class="prose prose-lg">
+            <Content />
+          </div>
+
+          <!-- Author Bio -->
+          <div class="card mt-5 bg-light">
+            <div class="card-body">
+              <h2 class="h5">Sobre el Autor</h2>
+              <p class="mb-0">
+                <strong>{data.author}</strong>
+                {data.authorRole && ` - ${data.authorRole}`}
+              </p>
+            </div>
+          </div>
+
+          <!-- Share Buttons -->
+          <div class="mt-4">
+            <h2 class="h6">Compartir:</h2>
+            <div class="d-flex gap-2">
+              <a href={`https://twitter.com/intent/tweet?url=${Astro.url}&text=${data.title}`} 
+                 class="btn btn-sm btn-outline-primary"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                Twitter
+              </a>
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${Astro.url}`}
+                 class="btn btn-sm btn-outline-primary"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                Facebook
+              </a>
+              <a href={`https://wa.me/?text=${data.title} ${Astro.url}`}
+                 class="btn btn-sm btn-outline-success"
+                 target="_blank"
+                 rel="noopener noreferrer">
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Posts -->
+      {relatedPosts.length > 0 && (
+        <section class="mt-5">
+          <div class="row justify-content-center">
+            <div class="col-lg-10">
+              <h2 class="h4 mb-4">Artículos Relacionados</h2>
+              <div class="row g-3">
+                {relatedPosts.map((post) => (
+                  <div class="col-md-4">
+                    <div class="card h-100">
+                      <img 
+                        src={post.data.featuredImage.src} 
+                        alt={post.data.featuredImageAlt}
+                        class="card-img-top"
+                        style="height: 150px; object-fit: cover;"
+                      />
+                      <div class="card-body">
+                        <h3 class="h6">
+                          <a href={`/blog/${post.slug}`} class="text-decoration-none">
+                            {post.data.title}
+                          </a>
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  </article>
+</Layout>
+
+<style>
+  .prose {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+  
+  .prose :global(h2) {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.875rem;
+    font-weight: 700;
+  }
+  
+  .prose :global(h3) {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .prose :global(p) {
+    margin-bottom: 1.25rem;
+  }
+  
+  .prose :global(ul), .prose :global(ol) {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+  }
+  
+  .prose :global(blockquote) {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1rem;
+    font-style: italic;
+    margin: 1.5rem 0;
+  }
+  
+  .prose :global(img) {
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+</style>
+```
+
+</Step>
+
+</Steps>
+
+<Note>
+  Consider implementing an RSS feed for your blog so visitors can subscribe via feed readers. Astro makes this straightforward with endpoint files.
+</Note>
+
+## Content Strategy
+
+### Publishing Schedule
+
+- **Consistency**: Publish at least 2-4 posts per month
+- **Timing**: Post during high-traffic hours (lunch time, evenings)
+- **Seasonal**: Align content with zoo events, holidays, and seasons
+- **Mix**: Balance educational content with news and behind-the-scenes stories
+
+### Writing Guidelines
+
+- **Scannable**: Use short paragraphs, bullet points, and subheadings
+- **Engaging**: Start with a hook, tell a story, include quotes
+- **Educational**: Teach something new in every post
+- **Authentic**: Use real photos and stories from zoo staff
+- **Call-to-Action**: End with visit invitation or related content links
+
+### SEO Best Practices
+
+- Target specific keywords ("jirafa bebé", "conservación leones", etc.)
+- Write descriptive meta descriptions
+- Use descriptive image alt text
+- Include internal links to species pages and events
+- Add schema.org BlogPosting markup
+
+<Tip>
+  Repurpose blog content across platforms: turn blog posts into social media posts, email newsletters, and even printed materials for zoo visitors.
+</Tip>
+
+## Engagement Features
+
+### Comments System
+
+Integrate a commenting platform:
+
+```html
+<!-- Using Disqus -->
+<div id="disqus_thread"></div>
+<script>
+  var disqus_config = function () {
+    this.page.url = window.location.href;
+    this.page.identifier = 'blog-post-slug';
+  };
+</script>
+```
+
+Or use privacy-friendly alternatives like Giscus (GitHub Discussions) or Utterances.
+
+### Newsletter Integration
+
+```astro
+<!-- src/components/NewsletterSignup.astro -->
+<div class="newsletter-signup card">
+  <div class="card-body">
+    <h3 class="h5">No te pierdas ninguna historia</h3>
+    <p class="small">Suscríbete para recibir nuestros artículos más recientes</p>
+    <form action="/api/newsletter" method="POST">
+      <div class="input-group">
+        <input 
+          type="email" 
+          name="email"
+          class="form-control" 
+          placeholder="tu@email.com"
+          required
+        />
+        <button class="btn btn-primary" type="submit">
+          Suscribirse
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+```
+
+## Performance Optimization
+
+- **Image Optimization**: Use Astro's Image component for automatic optimization
+- **Lazy Loading**: Lazy load images below the fold
+- **Pagination**: Limit posts per page (12-15 maximum)
+- **Static Generation**: Pre-render all blog pages at build time
+
+## Accessibility
+
+- Use proper heading hierarchy (h1 → h2 → h3)
+- Provide alt text for all images
+- Ensure sufficient color contrast
+- Make all interactive elements keyboard accessible
+- Add skip links for screen readers
+
+## Analytics & Metrics
+
+Track:
+- Page views per post
+- Time on page / reading time
+- Social shares
+- Comments and engagement
+- Top performing categories
+- Traffic sources
+
+Use this data to refine your content strategy and create more of what resonates with your audience.
